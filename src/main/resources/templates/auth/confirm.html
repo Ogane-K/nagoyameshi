@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+  <div th:replace="~{fragment :: meta}"></div>
+  <div th:replace="~{fragment :: styles}"></div>
+  <title>入力した会員情報の確認</title>
+</head>
+<body>
+  <div class="nagoyameshi-wrapper">
+    <div th:replace="~{fragment :: header}"></div>
+
+    <main>
+      <div class="container pt-4 pb-5 nagoyameshi-container">
+        <div class="row justify-content-center">
+          <div class="col-xl-5 col-lg-6 col-md-8">
+            <h1 class="mb-4 text-center">入力した会員情報の確認</h1>
+            <hr class="mb-4">
+
+            <dl class="row mb-3">
+              <dt class="col-md-4 fw-bold">氏名</dt>
+              <dd class="col-md-8" th:text="${userDto.name}">名前</dd>
+
+              <dt class="col-md-4 fw-bold">フリガナ</dt>
+              <dd class="col-md-8" th:text="${userDto.furigana}">フリガナ</dd>
+
+              <dt class="col-md-4 fw-bold">郵便番号</dt>
+              <dd class="col-md-8" th:text="${userDto.postalCode}">1010022</dd>
+
+              <dt class="col-md-4 fw-bold">住所</dt>
+              <dd class="col-md-8" th:text="${userDto.address}">東京都千代田区〜</dd>
+
+              <dt class="col-md-4 fw-bold">電話番号</dt>
+              <dd class="col-md-8" th:text="${userDto.phoneNumber}">09012345678</dd>
+
+              <dt class="col-md-4 fw-bold">誕生日</dt>
+              <dd class="col-md-8" th:text="${userDto.birthday}">1995-04-01</dd>
+
+              <dt class="col-md-4 fw-bold">職業</dt>
+              <dd class="col-md-8" th:text="${userDto.occupation}">エンジニア</dd>
+
+              <dt class="col-md-4 fw-bold">メールアドレス</dt>
+              <dd class="col-md-8" th:text="${userDto.email}">sample@example.com</dd>
+            </dl>
+
+            <form method="post" th:action="@{/signup/complete}">
+              <div class="d-flex justify-content-between">
+                <a th:href="@{/signup}" class="btn btn-secondary">戻る</a>
+                <button type="submit" class="btn text-white nagoyameshi-btn shadow-sm">登録する</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div th:replace="~{fragment :: footer}"></div>
+  </div>
+
+  <div th:replace="~{fragment :: scripts}"></div>
+</body>
+</html>

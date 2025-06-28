@@ -19,6 +19,8 @@
 
                             <hr class="mb-4">
 
+                            <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
                             <form method="post" th:action="@{/signup}" th:object="${signupForm}">
                                 <div class="form-group row mb-3">
                                     <div class="col-md-5">
