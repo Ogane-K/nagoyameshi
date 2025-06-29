@@ -19,7 +19,7 @@ public class WebSecurityConfig {
         http
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/", "/login", "/css/**", "/js/**", "/resources/**", "/images/**",
-                                "/storage/**", "/signup/**")
+                                "/storage/**", "/signup/**","/verify/**")
                         .permitAll() // 全ユーザーにアクセスを許可するURL
                         .anyRequest().authenticated() // 上記以外のURLはログインが必要（ロールを問わない）
                 )

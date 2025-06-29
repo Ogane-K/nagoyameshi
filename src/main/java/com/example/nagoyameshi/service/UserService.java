@@ -1,5 +1,6 @@
 package com.example.nagoyameshi.service;
 
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,7 +52,6 @@ public class UserService {
         user.setPhoneNumber(dto.getPhoneNumber());
         user.setEmail(dto.getEmail());
 
-
         user.setEmailVerified(false);
 
         // 職業(Occupation)が空だったらnullをセット
@@ -76,7 +76,7 @@ public class UserService {
 
         // ユーザーとロールの紐づけ情報の雛形を作成
         UserRole userRole = new UserRole();
-        
+
         // userRoleの主キー
         UserRoleId userRoleId = new UserRoleId();
 
@@ -84,11 +84,10 @@ public class UserService {
         Role role = roleRepository.findByName("ROLE_MEMBER")
                 .orElseThrow(() -> new RuntimeException("ロールが見つかりません"));
 
-
         // userRoleの主キーに値をセット
         userRoleId.setUserId(user.getId());
         userRoleId.setRoleId(role.getId());
-        
+
         // 紐づけ情報を雛形にセット
         userRole.setId(userRoleId);
         userRole.setUser(user);
@@ -99,13 +98,24 @@ public class UserService {
 
     }
 
-    // メールアドレスが既に登録されているか　されているならtrue
+    // メールアドレスが既に登録されているか されているならtrue
     public boolean isEmailRegistered(String email) {
         return userRepository.existsByEmail(email);
     }
 
-    // パスワードと確認用パスワードが一致しているか　一致してるならtrue
+    // パスワードと確認用パスワードが一致しているか 一致してるならtrue
     public boolean isSamePassword(String password, String passwordConfirmation) {
         return password.equals(passwordConfirmation);
     }
+
+    // idに基づいてユーザーを探す
+    public User findByUserById(Integer id) {
+        return userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("ユーザーが見つかりませんでした ID=" + id));
+    }
+
+    public User findByUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("ユーザーが見つかりませんでした Email=" + email));
+    }
+
 }

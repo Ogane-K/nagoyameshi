@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+
+<head>
+    <div th:replace="~{fragment :: meta}"></div>
+    <div th:replace="~{fragment :: styles}"></div>
+    <title>認証メール送信</title>
+</head>
+
+<body>
+    <div class="nagoyameshi-wrapper">
+        <div th:replace="~{fragment :: header}"></div>
+
+        <main>
+            <div class="container pt-5 pb-5 nagoyameshi-container">
+                <div class="row justify-content-center">
+                    <div class="col-xl-5 col-lg-6 col-md-8 text-center">
+
+                        <h1 class="mb-4">認証用メールを送信しました</h1>
+
+                        <p class="mb-4">
+                            ご登録いただいたメールアドレス宛に、<br>
+                            認証用リンクを記載したメールを送信しました。<br>
+                            メールをご確認の上、リンクをクリックして本登録を完了させてください。
+                        </p>
+
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <div th:replace="~{fragment :: footer}"></div>
+    </div>
+
+    <div th:replace="~{fragment :: scripts}"></div>
+</body>
+
+</html>
