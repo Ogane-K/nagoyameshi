@@ -9,11 +9,9 @@ import lombok.NoArgsConstructor;
 @Embeddable
 @Data
 @NoArgsConstructor
+public class RestaurantCategoryId implements Serializable {
 
-public class UserRoleId implements Serializable {
+    private Integer restaurantId;
 
-    private Integer userId;
-
-    private Integer roleId;
-
+    private Integer categoryId;
 }

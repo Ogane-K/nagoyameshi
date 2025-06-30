@@ -10,10 +10,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "roles")
+@Table(name = "categories")
 @Data
 @NoArgsConstructor
-public class Role {
+public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

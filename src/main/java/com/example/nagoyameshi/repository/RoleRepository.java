@@ -9,6 +9,10 @@ import com.example.nagoyameshi.entity.Role;
 
 @Repository
 public interface RoleRepository extends JpaRepository<Role, Integer>{
+    
+    // Idに基づいて検索
     Optional<Role> findById(Integer id);
+
+    // nameに基づいて検索
     Optional<Role> findByName(String name);
 }

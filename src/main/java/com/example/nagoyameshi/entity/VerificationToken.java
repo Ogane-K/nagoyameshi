@@ -12,10 +12,12 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "verification_tokens")
 @Data
+@NoArgsConstructor
 public class VerificationToken {
 
     @Id

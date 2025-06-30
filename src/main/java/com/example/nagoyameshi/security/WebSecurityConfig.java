@@ -14,32 +14,33 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity
 public class WebSecurityConfig {
 
-    @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/", "/login", "/css/**", "/js/**", "/resources/**", "/images/**",
-                                "/storage/**", "/signup/**","/verify/**")
-                        .permitAll() // 全ユーザーにアクセスを許可するURL
-                        .anyRequest().authenticated() // 上記以外のURLはログインが必要（ロールを問わない）
-                )
-                .formLogin((form) -> form
-                        .loginPage("/login") // ログインページのURL
-                        .loginProcessingUrl("/login") // ログインフォームの送信先URL
-                        .defaultSuccessUrl("/?loggedIn") // ログイン成功時のリダイレクト先URL
-                        .failureUrl("/login?error") // ログイン失敗時のリダイレクト先URL
-                        .permitAll())
-                .logout((logout) -> logout
-                        .logoutSuccessUrl("/?loggedOut") // ログアウト時のリダイレクト先URL
-                        .permitAll());
+        @Bean
+        SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+                http
+                                .authorizeHttpRequests((requests) -> requests
+                                                .requestMatchers("/", "/login", "/css/**", "/js/**", "/resources/**",
+                                                                "/images/**",
+                                                                "/storage/**", "/signup/**", "/verify/**")
+                                                .permitAll()
+                                                .requestMatchers("/admin/**").hasRole("ADMIN") // 全ユーザーにアクセスを許可するURL
+                                                .anyRequest().authenticated() // 上記以外のURLはログインが必要（ロールを問わない）
+                                )
+                                .formLogin((form) -> form
+                                                .loginPage("/login") // ログインページのURL
+                                                .loginProcessingUrl("/login") // ログインフォームの送信先URL
+                                                .defaultSuccessUrl("/?loggedIn") // ログイン成功時のリダイレクト先URL
+                                                .failureUrl("/login?error") // ログイン失敗時のリダイレクト先URL
+                                                .permitAll())
+                                .logout((logout) -> logout
+                                                .logoutSuccessUrl("/?loggedOut") // ログアウト時のリダイレクト先URL
+                                                .permitAll());
 
-        return http.build();
-    }
+                return http.build();
+        }
 
-    @Bean
-    PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
-
+        @Bean
+        PasswordEncoder passwordEncoder() {
+                return new BCryptPasswordEncoder();
+        }
 
 }

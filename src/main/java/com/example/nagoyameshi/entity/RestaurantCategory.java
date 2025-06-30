@@ -10,22 +10,21 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "user_roles")
+@Table(name = "restaurants_categories")
 @Data
 @NoArgsConstructor
-public class UserRole {
+public class RestaurantCategory {
 
     @EmbeddedId
-    private UserRoleId id;
+    private RestaurantCategoryId id;
 
     @ManyToOne
-    @MapsId("userId")
-    @JoinColumn(name = "user_id")
-    private User user;
+    @MapsId("restaurantId")
+    @JoinColumn(name = "restaurants_id")
+    private Restaurant restaurant;
 
     @ManyToOne
-    @MapsId("roleId")
-    @JoinColumn(name = "role_id")
-    private Role role;
-
+    @MapsId("categoryId")
+    @JoinColumn(name = "category_id")
+    private Category category;
 }

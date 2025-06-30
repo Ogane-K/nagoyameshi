@@ -10,5 +10,6 @@ import com.example.nagoyameshi.entity.VerificationToken;
 @Repository
 public interface VerificationTokenRepository extends JpaRepository<VerificationToken, Integer > {
 
+    // tokenに基づいて検索
     Optional<VerificationToken> findByToken(String token); 
 }
