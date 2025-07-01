@@ -1,5 +1,7 @@
 package com.example.nagoyameshi.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -33,6 +35,8 @@ public class UserService {
         this.userRoleRepository = userRoleRepository;
         this.roleRepository = roleRepository;
     }
+
+    // ★ロジック系メソッド★
 
     // ユーザーアカウントを作成する
     @Transactional
@@ -108,14 +112,29 @@ public class UserService {
         return password.equals(passwordConfirmation);
     }
 
+    // ★検索系メソッド★
+
     // idに基づいてユーザーを探す
     public User findByUserById(Integer id) {
         return userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("ユーザーが見つかりませんでした ID=" + id));
     }
 
+    // emailに基づいてユーザーを探す
     public User findByUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("ユーザーが見つかりませんでした Email=" + email));
+    }
+
+    // ★ページング系検索メソッド★
+
+    // 全ユーザーをページングされた状態で取得する
+    public Page<User> findAllUsers(Pageable pageable) {
+        return userRepository.findAll(pageable);
+    }
+
+    // 氏名またはフリガナの一部と合致するユーザーをページングされた状態で取得する
+    public Page<User> seachUsersByNameOrFurigana(String keyword, Pageable pageable) {
+        return userRepository.findByNameContainingIgnoreCaseOrFuriganaContainingIgnoreCase(keyword, keyword, pageable);
     }
 
 }

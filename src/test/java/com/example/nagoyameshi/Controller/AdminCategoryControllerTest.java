@@ -35,7 +35,7 @@ public class AdminCategoryControllerTest {
     }
 
     @Test
-    @WithUserDetails("hyakuro.samurai@example.com")
+    @WithUserDetails("user2@example.com")
     public void 一般ユーザーとしてアクセスした場合403エラーが出る() throws Exception {
         mockMvc.perform(get("/admin/categories"))
                 .andExpect(status().isForbidden());
@@ -59,7 +59,7 @@ public class AdminCategoryControllerTest {
     }
 
     @Test
-    @WithUserDetails("hyakuro.samurai@example.com")
+    @WithUserDetails("user2@example.com")
     public void 一般ユーザーが登録POSTすると403エラー() throws Exception {
         mockMvc.perform(post("/admin/categories/create").with(csrf()))
                 .andExpect(status().isForbidden());
@@ -84,7 +84,7 @@ public class AdminCategoryControllerTest {
     }
 
     @Test
-    @WithUserDetails("hyakuro.samurai@example.com")
+    @WithUserDetails("user2@example.com")
     public void 一般ユーザーが更新POSTすると403エラー() throws Exception {
         mockMvc.perform(post("/admin/categories/1/update").with(csrf()))
                 .andExpect(status().isForbidden());
@@ -109,7 +109,7 @@ public class AdminCategoryControllerTest {
     }
 
     @Test
-    @WithUserDetails("hyakuro.samurai@example.com")
+    @WithUserDetails("user2@example.com")
     public void 一般ユーザーが削除POSTすると403エラー() throws Exception {
         mockMvc.perform(post("/admin/categories/1/delete").with(csrf()))
                 .andExpect(status().isForbidden());
