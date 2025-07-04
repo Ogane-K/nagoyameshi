@@ -244,7 +244,7 @@ VALUES (
         '2025-06-27 10:44:03',
         '2025-06-28 10:44:03'
     );
-INSERT INTO restaurants (
+INSERT IGNORE INTO restaurants (
         name,
         image,
         description,
