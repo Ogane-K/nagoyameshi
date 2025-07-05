@@ -156,6 +156,21 @@
                                                 th:text="${#numbers.formatInteger(restaurant.seatingCapacity, 1, 'COMMA') + '席'}"></span>
                                         </div>
                                     </div>
+
+                                    <div class="row pb-2 mb-2 border-bottom">
+                                        <div class="col-2">
+                                            <span class="fw-bold">カテゴリ</span>
+                                        </div>
+
+                                        <div class="col">
+                                            <span th:if="${categoryList != null and !categoryList.isEmpty()}"
+                                                th:each="cat, stat : ${categoryList}"
+                                                th:text="${cat.name + (stat.last ? '' : '、')}">
+                                            </span>
+                                            <span th:if="${categoryList == null or categoryList.isEmpty()}">なし</span>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>

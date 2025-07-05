@@ -1,5 +1,7 @@
 package com.example.nagoyameshi.service;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,10 @@ public class CategoryService {
 
     public CategoryService(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
+    }
+
+    public List<Category> findAllCategoriesList() {
+        return categoryRepository.findAll();
     }
 
     // すべてのカテゴリをページングされた状態で取得する。

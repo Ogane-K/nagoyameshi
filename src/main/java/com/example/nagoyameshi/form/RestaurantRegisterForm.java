@@ -1,6 +1,8 @@
 package com.example.nagoyameshi.form;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -48,7 +50,6 @@ public class RestaurantRegisterForm {
     @Min(value = 0, message = "座席数は0席以上に設定してください。")
     private Integer seatingCapacity;
 
-    
     private String regularHoliday;
 
     @NotNull
@@ -62,4 +63,37 @@ public class RestaurantRegisterForm {
     @DecimalMax("180.0")
     @NotNull(message = "経度を入力してください。")
     private Double longitude;
+
+    private Integer categoryId1;
+
+    private Integer categoryId2;
+
+    private Integer categoryId3;
+
+    // カテゴリーIdをリスト化してゲットする
+    public List<Integer> getCategoryIds() {
+
+        List<Integer> ids = new ArrayList<>();
+
+        // nullじゃないカテゴリーIdフィールドをリストにいれる
+        if (categoryId1 != null)
+            ids.add(categoryId1);
+        if (categoryId2 != null)
+            ids.add(categoryId2);
+        if (categoryId3 != null)
+            ids.add(categoryId3);
+
+        return ids;
+    }
+
+    // カテゴリーidに重複がないかチェックする
+    // @return true : 重複あり / false :重複なし
+    public boolean hasDuplicateCategory() {
+        List<Integer> ids = getCategoryIds();
+
+        long distinctCount = ids.stream().distinct().count();
+
+        return ids.size() != distinctCount;
+    }
+
 }

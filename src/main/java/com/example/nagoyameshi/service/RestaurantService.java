@@ -5,7 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalTime;
-import java.util.DuplicateFormatFlagsException;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -23,9 +23,12 @@ import com.example.nagoyameshi.repository.RestaurantRepository;
 public class RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
+    private final RestaurantCategoryService restaurantCategoryService;
 
-    public RestaurantService(RestaurantRepository restaurantRepository) {
+    public RestaurantService(RestaurantRepository restaurantRepository,
+            RestaurantCategoryService restaurantCategoryService) {
         this.restaurantRepository = restaurantRepository;
+        this.restaurantCategoryService = restaurantCategoryService;
     }
 
     // ★検索系メソッド★
@@ -84,7 +87,8 @@ public class RestaurantService {
     // すでに登録されていない店舗がフォームから送信された場合に
     // 店舗をDBに登録する
     @Transactional
-    public void createRestaurant(Restaurant restaurant, MultipartFile multipartFile) throws IOException {
+    public void createRestaurant(Restaurant restaurant, MultipartFile multipartFile, List<Integer> categoryIds)
+            throws IOException {
 
         if (restaurantRepository.existsByName(restaurant.getName())) {
             throw new DuplicateRestaurantNameException("その名前の店舗はすでに登録されています");
@@ -107,11 +111,15 @@ public class RestaurantService {
         // DBに店舗情報を保存
         restaurantRepository.save(restaurant);
 
+        // カテゴリーと店舗の対比関係を保存する
+        restaurantCategoryService.updateCategories(restaurant, categoryIds);
+
     }
 
     // 店舗情報をDBに更新する
     @Transactional
-    public void updateRestaurant(Restaurant restaurant, MultipartFile multipartFile) throws IOException {
+    public void updateRestaurant(Restaurant restaurant, MultipartFile multipartFile, List<Integer> categoryIds)
+            throws IOException {
 
         // 画像の更新処理
         if (multipartFile != null && !multipartFile.isEmpty()) {
@@ -128,7 +136,11 @@ public class RestaurantService {
             restaurant.setImage(hashedImageName);
         }
 
+        // 情報の更新
         restaurantRepository.save(restaurant);
+
+        // カテゴリーと店舗の対比関係を更新する
+        restaurantCategoryService.updateCategories(restaurant, categoryIds);
     }
 
     // 指定した店舗をDBから削除する

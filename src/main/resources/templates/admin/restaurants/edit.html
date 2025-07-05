@@ -232,6 +232,49 @@
                                         </div>
                                     </div>
 
+                                    <div class="form-group row mb-3">
+                                        <label for="categoryId1"
+                                            class="col-md-5 col-form-label text-md-left fw-bold">カテゴリ1（3つまで選択可能）</label>
+                                        <div class="col-md-7">
+                                            <select class="form-select" th:field="*{categoryId1}">
+                                                <option value="">--選択してください--</option>
+                                                <option th:each="cat : ${categoryList}" th:value="${cat.id}"
+                                                    th:text="${cat.name}"
+                                                    th:selected="${restaurantEditForm.categoryId1} == ${cat.id}">
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-group row mb-3">
+                                        <label for="categoryId2"
+                                            class="col-md-5 col-form-label text-md-left fw-bold">カテゴリ2（3つまで選択可能）</label>
+                                        <div class="col-md-7">
+                                            <select class="form-select" th:field="*{categoryId2}">
+                                                <option value="">--選択してください--</option>
+                                                <option th:each="cat : ${categoryList}" th:value="${cat.id}"
+                                                    th:text="${cat.name}"
+                                                    th:selected="${restaurantEditForm.categoryId2} == ${cat.id}">
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row mb-3">
+                                        <label for="categoryId3"
+                                            class="col-md-5 col-form-label text-md-left fw-bold">カテゴリ3（3つまで選択可能）</label>
+                                        <div class="col-md-7">
+                                            <select class="form-select" th:field="*{categoryId3}">
+                                                <option value="">--選択してください--</option>
+                                                <option th:each="cat : ${categoryList}" th:value="${cat.id}"
+                                                    th:text="${cat.name}"
+                                                    th:selected="${restaurantEditForm.categoryId3} == ${cat.id}">
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+
 
                                     <hr class="my-4">
 
