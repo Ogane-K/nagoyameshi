@@ -53,7 +53,6 @@ CREATE TABLE IF NOT EXISTS restaurants (
     seating_capacity INT NOT NULL,
     favorite_count INT DEFAULT 0 NOT NULL,
     rating DECIMAL(2, 1) DEFAULT 0.0 NOT NULL,
-    regular_holiday VARCHAR(50),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted_at DATETIME
@@ -64,4 +63,11 @@ CREATE TABLE IF NOT EXISTS restaurants_categories (
     PRIMARY KEY (restaurants_id, category_id),
     CONSTRAINT fk_restaurants_categories_restaurants_id FOREIGN KEY (restaurants_id) REFERENCES restaurants(id) ON DELETE CASCADE,
     CONSTRAINT fk_restaurants_categories_category_id FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS holidays (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    restaurant_id INT NOT NULL,
+    day_type VARCHAR(20) NOT NULL,
+    CONSTRAINT fk_holidays_restaurant FOREIGN KEY (restaurant_id) REFERENCES restaurants(id) ON DELETE CASCADE,
+    CONSTRAINT uc_restaurant_day UNIQUE (restaurant_id, day_type)
 );

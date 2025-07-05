@@ -47,241 +47,265 @@
                                         </div>
                                     </div>
 
-                                    <div class="form-group row mb-3">
-                                        <label for="imageFile"
-                                            class="col-md-5 col-form-label text-md-left fw-bold">店舗画像</label>
+                                    <!-- 店舗画像 -->
+                                        <div class="form-group row mb-3">
+                                            <label for="imageFile"
+                                                class="col-md-5 col-form-label text-md-left fw-bold">店舗画像</label>
 
-                                        <div class="col-md-7">
-                                            <div th:if="${#fields.hasErrors('imageFile')}"
-                                                class="text-danger small mb-2" th:errors="*{imageFile}"></div>
-                                            <input type="file" class="form-control" th:field="*{imageFile}">
+                                            <div class="col-md-7">
+                                                <!-- バリデーションエラー -->
+                                                <div th:if="${#fields.hasErrors('imageFile')}"
+                                                    class="text-danger small mb-2" th:errors="*{imageFile}"></div>
+
+                                                <!-- 画像プレビュー -->
+                                                <div class="mb-2">
+                                                    <img th:src="${restaurantEditForm.currentImageFileName != null} ?
+                                                                @{/storage/{file}(file=${restaurantEditForm.currentImageFileName})} :
+                                                             @{/images/noimage.png}" class="img-thumbnail" style="max-width: 300px;" />
+                                                </div>
+
+                                                <!-- ファイル選択 -->
+                                                <input type="file" class="form-control" th:field="*{imageFile}"
+                                                    accept="image/*" />
+
+                                                <!-- 注意文 -->
+                                                <small class="text-muted">※画像を選択すると、現在の画像が上書きされます（選択しなければそのまま）</small>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <!-- 選択された画像の表示場所 -->
-                                    <div class="row mb-3">
-                                        <label class="fw-bold">現在の画像</label>
-                                        <div>
-                                            <img th:if="${restaurantEditForm.currentImageFileName != null}"
-                                                th:src="@{'/storage/' + ${restaurantEditForm.currentImageFileName}}"
-                                                class="img-thumbnail" style="max-width: 300px;">
-                                            <img th:unless="${restaurantEditForm.currentImageFileName != null}"
-                                                th:src="@{/images/noimage.png}" class="img-thumbnail"
-                                                style="max-width: 300px;">
+                                        <!-- もとの画像名を送る -->
+                                        <input type="hidden" th:field="*{currentImageFileName}" />
+
+
+                                        <div class="form-group row mb-3">
+                                            <label for="description"
+                                                class="col-md-5 col-form-label text-md-left fw-bold">説明</label>
+
+                                            <div class="col-md-7">
+                                                <div th:if="${#fields.hasErrors('description')}"
+                                                    class="text-danger small mb-2" th:errors="*{description}"></div>
+                                                <textarea class="form-control" th:field="*{description}" cols="30"
+                                                    rows="5"></textarea>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div class="mb-3">
-                                        <label for="imageFile" class="form-label fw-bold">新しい画像を選択</label>
-                                        <input type="file" class="form-control" th:field="*{imageFile}"
-                                            accept="image/*">
-                                        <small class="text-muted">※画像を選択すると、現在の画像が上書きされます（選択しなければそのまま）</small>
-                                    </div>
+                                        <div class="form-group row mb-3">
+                                            <label for="lowestPrice"
+                                                class="col-md-5 col-form-label text-md-left fw-bold">最低価格</label>
 
-
-                                    <div class="form-group row mb-3">
-                                        <label for="description"
-                                            class="col-md-5 col-form-label text-md-left fw-bold">説明</label>
-
-                                        <div class="col-md-7">
-                                            <div th:if="${#fields.hasErrors('description')}"
-                                                class="text-danger small mb-2" th:errors="*{description}"></div>
-                                            <textarea class="form-control" th:field="*{description}" cols="30"
-                                                rows="5"></textarea>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group row mb-3">
-                                        <label for="lowestPrice"
-                                            class="col-md-5 col-form-label text-md-left fw-bold">最低価格</label>
-
-                                        <div class="col-md-7">
-                                            <div th:if="${#fields.hasErrors('lowestPrice')}"
-                                                class="text-danger small mb-2" th:errors="*{lowestPrice}"></div>
-                                            <select class="form-control form-select" th:field="*{lowestPrice}">
-                                                <option value="" hidden>選択してください</option>
-                                                <th:block th:each="i : ${#numbers.sequence(0, 19)}">
-                                                    <th:block th:with="lowestPrice=${500 + (500 * i)}">
-                                                        <option th:value="${lowestPrice}"
-                                                            th:selected="${lowestPrice == restaurantEditForm.lowestPrice}"
-                                                            th:text="${#numbers.formatInteger(lowestPrice, 1, 'COMMA')} + '円'">
-                                                        </option>
-                                                    </th:block>
-                                                </th:block>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group row mb-3">
-                                        <label for="highestPrice"
-                                            class="col-md-5 col-form-label text-md-left fw-bold">最高価格</label>
-
-                                        <div class="col-md-7">
-                                            <div th:if="${#fields.hasErrors('highestPrice')}"
-                                                class="text-danger small mb-2" th:errors="*{highestPrice}"></div>
-                                            <select class="form-control form-select" th:field="*{highestPrice}">
-                                                <option value="" hidden>選択してください</option>
-                                                <th:block th:each="i : ${#numbers.sequence(0, 19)}">
-                                                    <th:block th:with="highestPrice=${500 + (500 * i)}">
-                                                        <option th:value="${highestPrice}"
-                                                            th:selected="${highestPrice == restaurantEditForm.highestPrice}"
-                                                            th:text="${#numbers.formatInteger(highestPrice, 1, 'COMMA')} + '円'">
-                                                        </option>
-                                                    </th:block>
-                                                </th:block>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group row mb-3">
-                                        <label for="postalCode"
-                                            class="col-md-5 col-form-label text-md-left fw-bold">郵便番号</label>
-
-                                        <div class="col-md-7">
-                                            <div th:if="${#fields.hasErrors('postalCode')}"
-                                                class="text-danger small mb-2" th:errors="*{postalCode}"></div>
-                                            <input type="text" class="form-control" th:field="*{postalCode}">
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group row mb-3">
-                                        <label for="address"
-                                            class="col-md-5 col-form-label text-md-left fw-bold">住所</label>
-
-                                        <div class="col-md-7">
-                                            <div th:if="${#fields.hasErrors('address')}" class="text-danger small mb-2"
-                                                th:errors="*{address}"></div>
-                                            <input type="text" class="form-control" th:field="*{address}">
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group row mb-3">
-                                        <label for="openingTime"
-                                            class="col-md-5 col-form-label text-md-left fw-bold">開店時間</label>
-
-                                        <div class="col-md-7">
-                                            <div th:if="${#fields.hasErrors('openingTime')}"
-                                                class="text-danger small mb-2" th:errors="*{openingTime}"></div>
-                                            <select class="form-control form-select" th:field="*{openingTime}">
-                                                <option value="" hidden>選択してください</option>
-                                                <th:block th:with="startTime=${T(java.time.LocalTime).MIDNIGHT}">
-                                                    <th:block th:each="i : ${#numbers.sequence(0, 47)}">
-                                                        <th:block
-                                                            th:with="openingTime=${startTime.plusMinutes(i * 30).toString()}">
-                                                            <option th:value="${openingTime}"
-                                                                th:selected="${openingTime == restaurantEditForm.openingTime}"
-                                                                th:text="${openingTime}"></option>
+                                            <div class="col-md-7">
+                                                <div th:if="${#fields.hasErrors('lowestPrice')}"
+                                                    class="text-danger small mb-2" th:errors="*{lowestPrice}"></div>
+                                                <select class="form-control form-select" th:field="*{lowestPrice}">
+                                                    <option value="" hidden>選択してください</option>
+                                                    <th:block th:each="i : ${#numbers.sequence(0, 19)}">
+                                                        <th:block th:with="lowestPrice=${500 + (500 * i)}">
+                                                            <option th:value="${lowestPrice}"
+                                                                th:selected="${lowestPrice == restaurantEditForm.lowestPrice}"
+                                                                th:text="${#numbers.formatInteger(lowestPrice, 1, 'COMMA')} + '円'">
+                                                            </option>
                                                         </th:block>
                                                     </th:block>
-                                                </th:block>
-                                            </select>
+                                                </select>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div class="form-group row mb-3">
-                                        <label for="closingTime"
-                                            class="col-md-5 col-form-label text-md-left fw-bold">閉店時間</label>
+                                        <div class="form-group row mb-3">
+                                            <label for="highestPrice"
+                                                class="col-md-5 col-form-label text-md-left fw-bold">最高価格</label>
 
-                                        <div class="col-md-7">
-                                            <div th:if="${#fields.hasErrors('closingTime')}"
-                                                class="text-danger small mb-2" th:errors="*{closingTime}"></div>
-                                            <select class="form-control form-select" th:field="*{closingTime}">
-                                                <option value="" hidden>選択してください</option>
-                                                <th:block th:with="startTime=${T(java.time.LocalTime).MIDNIGHT}">
-                                                    <th:block th:each="i : ${#numbers.sequence(0, 47)}">
-                                                        <th:block
-                                                            th:with="closingTime=${startTime.plusMinutes(i * 30).toString()}">
-                                                            <option th:value="${closingTime}"
-                                                                th:selected="${closingTime == restaurantEditForm.closingTime}"
-                                                                th:text="${closingTime}"></option>
+                                            <div class="col-md-7">
+                                                <div th:if="${#fields.hasErrors('highestPrice')}"
+                                                    class="text-danger small mb-2" th:errors="*{highestPrice}"></div>
+                                                <select class="form-control form-select" th:field="*{highestPrice}">
+                                                    <option value="" hidden>選択してください</option>
+                                                    <th:block th:each="i : ${#numbers.sequence(0, 19)}">
+                                                        <th:block th:with="highestPrice=${500 + (500 * i)}">
+                                                            <option th:value="${highestPrice}"
+                                                                th:selected="${highestPrice == restaurantEditForm.highestPrice}"
+                                                                th:text="${#numbers.formatInteger(highestPrice, 1, 'COMMA')} + '円'">
+                                                            </option>
                                                         </th:block>
                                                     </th:block>
-                                                </th:block>
-                                            </select>
+                                                </select>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div class="form-group row mb-3">
-                                        <label for="seatingCapacity"
-                                            class="col-md-5 col-form-label text-md-left fw-bold">座席数</label>
+                                        <div class="form-group row mb-3">
+                                            <label for="postalCode"
+                                                class="col-md-5 col-form-label text-md-left fw-bold">郵便番号</label>
 
-                                        <div class="col-md-7">
-                                            <div th:if="${#fields.hasErrors('seatingCapacity')}"
-                                                class="text-danger small mb-2" th:errors="*{seatingCapacity}"></div>
-                                            <input type="number" class="form-control" th:field="*{seatingCapacity}">
+                                            <div class="col-md-7">
+                                                <div th:if="${#fields.hasErrors('postalCode')}"
+                                                    class="text-danger small mb-2" th:errors="*{postalCode}"></div>
+                                                <input type="text" class="form-control" th:field="*{postalCode}">
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div class="form-group row mb-3">
-                                        <label for="latitude"
-                                            class="col-md-5 col-form-label text-md-left fw-bold">緯度</label>
-                                        <div class="col-md-7">
-                                            <div th:if="${#fields.hasErrors('latitude')}" class="text-danger small mb-2"
-                                                th:errors="*{latitude}"></div>
-                                            <input type="text" class="form-control" th:field="*{latitude}">
+                                        <div class="form-group row mb-3">
+                                            <label for="address"
+                                                class="col-md-5 col-form-label text-md-left fw-bold">住所</label>
+
+                                            <div class="col-md-7">
+                                                <div th:if="${#fields.hasErrors('address')}"
+                                                    class="text-danger small mb-2" th:errors="*{address}"></div>
+                                                <input type="text" class="form-control" th:field="*{address}">
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div class="form-group row mb-3">
-                                        <label for="longitude"
-                                            class="col-md-5 col-form-label text-md-left fw-bold">経度</label>
-                                        <div class="col-md-7">
-                                            <div th:if="${#fields.hasErrors('longitude')}"
-                                                class="text-danger small mb-2" th:errors="*{longitude}"></div>
-                                            <input type="text" class="form-control" th:field="*{longitude}">
+                                        <div class="form-group row mb-3">
+                                            <label for="openingTime"
+                                                class="col-md-5 col-form-label text-md-left fw-bold">開店時間</label>
+
+                                            <div class="col-md-7">
+                                                <div th:if="${#fields.hasErrors('openingTime')}"
+                                                    class="text-danger small mb-2" th:errors="*{openingTime}"></div>
+                                                <select class="form-control form-select" th:field="*{openingTime}">
+                                                    <option value="" hidden>選択してください</option>
+                                                    <th:block th:with="startTime=${T(java.time.LocalTime).MIDNIGHT}">
+                                                        <th:block th:each="i : ${#numbers.sequence(0, 47)}">
+                                                            <th:block
+                                                                th:with="openingTime=${startTime.plusMinutes(i * 30).toString()}">
+                                                                <option th:value="${openingTime}"
+                                                                    th:selected="${openingTime == restaurantEditForm.openingTime}"
+                                                                    th:text="${openingTime}"></option>
+                                                            </th:block>
+                                                        </th:block>
+                                                    </th:block>
+                                                </select>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div class="form-group row mb-3">
-                                        <label for="categoryId1"
-                                            class="col-md-5 col-form-label text-md-left fw-bold">カテゴリ1（3つまで選択可能）</label>
-                                        <div class="col-md-7">
-                                            <select class="form-select" th:field="*{categoryId1}">
-                                                <option value="">--選択してください--</option>
-                                                <option th:each="cat : ${categoryList}" th:value="${cat.id}"
-                                                    th:text="${cat.name}"
-                                                    th:selected="${restaurantEditForm.categoryId1} == ${cat.id}">
-                                                </option>
-                                            </select>
+                                        <div class="form-group row mb-3">
+                                            <label for="closingTime"
+                                                class="col-md-5 col-form-label text-md-left fw-bold">閉店時間</label>
+
+                                            <div class="col-md-7">
+                                                <div th:if="${#fields.hasErrors('closingTime')}"
+                                                    class="text-danger small mb-2" th:errors="*{closingTime}"></div>
+                                                <select class="form-control form-select" th:field="*{closingTime}">
+                                                    <option value="" hidden>選択してください</option>
+                                                    <th:block th:with="startTime=${T(java.time.LocalTime).MIDNIGHT}">
+                                                        <th:block th:each="i : ${#numbers.sequence(0, 47)}">
+                                                            <th:block
+                                                                th:with="closingTime=${startTime.plusMinutes(i * 30).toString()}">
+                                                                <option th:value="${closingTime}"
+                                                                    th:selected="${closingTime == restaurantEditForm.closingTime}"
+                                                                    th:text="${closingTime}"></option>
+                                                            </th:block>
+                                                        </th:block>
+                                                    </th:block>
+                                                </select>
+                                            </div>
                                         </div>
-                                    </div>
 
 
-                                    <div class="form-group row mb-3">
-                                        <label for="categoryId2"
-                                            class="col-md-5 col-form-label text-md-left fw-bold">カテゴリ2（3つまで選択可能）</label>
-                                        <div class="col-md-7">
-                                            <select class="form-select" th:field="*{categoryId2}">
-                                                <option value="">--選択してください--</option>
-                                                <option th:each="cat : ${categoryList}" th:value="${cat.id}"
-                                                    th:text="${cat.name}"
-                                                    th:selected="${restaurantEditForm.categoryId2} == ${cat.id}">
-                                                </option>
-                                            </select>
+                                        <!-- 休日 -->
+
+                                        <div class="form-group row mb-3">
+                                            <label class="col-md-5 col-form-label text-md-left fw-bold">定休日</label>
+
+                                            <div class="col-md-7 d-flex flex-wrap">
+                                                <div class="form-check d-flex align-items-center me-3"
+                                                    th:each="dayType, stat : ${regularHolidays}">
+
+                                                    <input type="checkbox" class="form-check-input"
+                                                        th:id="${'holiday' + stat.index}" th:name="holidayCodes"
+                                                        th:value="${dayType.name()}"
+                                                        th:checked="${#lists.contains(restaurantEditForm.holidayCodes, dayType.name())}" />
+
+                                                    <label class="form-check-label" th:for="${'holiday' + stat.index}">
+                                                        <span class="badge bg-secondary ms-1"
+                                                            th:text="${dayType.label}"></span>
+                                                    </label>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div class="form-group row mb-3">
-                                        <label for="categoryId3"
-                                            class="col-md-5 col-form-label text-md-left fw-bold">カテゴリ3（3つまで選択可能）</label>
-                                        <div class="col-md-7">
-                                            <select class="form-select" th:field="*{categoryId3}">
-                                                <option value="">--選択してください--</option>
-                                                <option th:each="cat : ${categoryList}" th:value="${cat.id}"
-                                                    th:text="${cat.name}"
-                                                    th:selected="${restaurantEditForm.categoryId3} == ${cat.id}">
-                                                </option>
-                                            </select>
+
+
+
+                                        <div class="form-group row mb-3">
+                                            <label for="seatingCapacity"
+                                                class="col-md-5 col-form-label text-md-left fw-bold">座席数</label>
+
+                                            <div class="col-md-7">
+                                                <div th:if="${#fields.hasErrors('seatingCapacity')}"
+                                                    class="text-danger small mb-2" th:errors="*{seatingCapacity}"></div>
+                                                <input type="number" class="form-control" th:field="*{seatingCapacity}">
+                                            </div>
                                         </div>
-                                    </div>
+
+                                        <div class="form-group row mb-3">
+                                            <label for="latitude"
+                                                class="col-md-5 col-form-label text-md-left fw-bold">緯度</label>
+                                            <div class="col-md-7">
+                                                <div th:if="${#fields.hasErrors('latitude')}"
+                                                    class="text-danger small mb-2" th:errors="*{latitude}"></div>
+                                                <input type="text" class="form-control" th:field="*{latitude}">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row mb-3">
+                                            <label for="longitude"
+                                                class="col-md-5 col-form-label text-md-left fw-bold">経度</label>
+                                            <div class="col-md-7">
+                                                <div th:if="${#fields.hasErrors('longitude')}"
+                                                    class="text-danger small mb-2" th:errors="*{longitude}"></div>
+                                                <input type="text" class="form-control" th:field="*{longitude}">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row mb-3">
+                                            <label for="categoryId1"
+                                                class="col-md-5 col-form-label text-md-left fw-bold">カテゴリ1（3つまで選択可能）</label>
+                                            <div class="col-md-7">
+                                                <select class="form-select" th:field="*{categoryId1}">
+                                                    <option value="">--選択してください--</option>
+                                                    <option th:each="cat : ${categoryList}" th:value="${cat.id}"
+                                                        th:text="${cat.name}"
+                                                        th:selected="${restaurantEditForm.categoryId1} == ${cat.id}">
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
 
 
-                                    <hr class="my-4">
+                                        <div class="form-group row mb-3">
+                                            <label for="categoryId2"
+                                                class="col-md-5 col-form-label text-md-left fw-bold">カテゴリ2（3つまで選択可能）</label>
+                                            <div class="col-md-7">
+                                                <select class="form-select" th:field="*{categoryId2}">
+                                                    <option value="">--選択してください--</option>
+                                                    <option th:each="cat : ${categoryList}" th:value="${cat.id}"
+                                                        th:text="${cat.name}"
+                                                        th:selected="${restaurantEditForm.categoryId2} == ${cat.id}">
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
 
-                                    <div class="form-group d-flex justify-content-center mb-4">
-                                        <button type="submit"
-                                            class="btn text-white shadow-sm w-50 nagoyameshi-btn">更新</button>
-                                    </div>
+                                        <div class="form-group row mb-3">
+                                            <label for="categoryId3"
+                                                class="col-md-5 col-form-label text-md-left fw-bold">カテゴリ3（3つまで選択可能）</label>
+                                            <div class="col-md-7">
+                                                <select class="form-select" th:field="*{categoryId3}">
+                                                    <option value="">--選択してください--</option>
+                                                    <option th:each="cat : ${categoryList}" th:value="${cat.id}"
+                                                        th:text="${cat.name}"
+                                                        th:selected="${restaurantEditForm.categoryId3} == ${cat.id}">
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+
+                                        <hr class="my-4">
+
+                                        <div class="form-group d-flex justify-content-center mb-4">
+                                            <button type="submit"
+                                                class="btn text-white shadow-sm w-50 nagoyameshi-btn">更新</button>
+                                        </div>
                                 </form>
                             </div>
                         </div>

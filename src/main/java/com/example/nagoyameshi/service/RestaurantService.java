@@ -22,13 +22,16 @@ import com.example.nagoyameshi.repository.RestaurantRepository;
 @Service
 public class RestaurantService {
 
+    private final HolidayService holidayService;
+
     private final RestaurantRepository restaurantRepository;
     private final RestaurantCategoryService restaurantCategoryService;
 
     public RestaurantService(RestaurantRepository restaurantRepository,
-            RestaurantCategoryService restaurantCategoryService) {
+            RestaurantCategoryService restaurantCategoryService, HolidayService holidayService) {
         this.restaurantRepository = restaurantRepository;
         this.restaurantCategoryService = restaurantCategoryService;
+        this.holidayService = holidayService;
     }
 
     // ★検索系メソッド★
@@ -87,7 +90,10 @@ public class RestaurantService {
     // すでに登録されていない店舗がフォームから送信された場合に
     // 店舗をDBに登録する
     @Transactional
-    public void createRestaurant(Restaurant restaurant, MultipartFile multipartFile, List<Integer> categoryIds)
+    public void createRestaurant(Restaurant restaurant,
+            MultipartFile multipartFile,
+            List<Integer> categoryIds,
+            List<String> holidayCodes)
             throws IOException {
 
         if (restaurantRepository.existsByName(restaurant.getName())) {
@@ -111,6 +117,9 @@ public class RestaurantService {
         // DBに店舗情報を保存
         restaurantRepository.save(restaurant);
 
+        // 休日と店舗の対比関係を保存する
+        holidayService.updateHolidays(holidayCodes, restaurant);
+
         // カテゴリーと店舗の対比関係を保存する
         restaurantCategoryService.updateCategories(restaurant, categoryIds);
 
@@ -118,7 +127,10 @@ public class RestaurantService {
 
     // 店舗情報をDBに更新する
     @Transactional
-    public void updateRestaurant(Restaurant restaurant, MultipartFile multipartFile, List<Integer> categoryIds)
+    public void updateRestaurant(Restaurant restaurant,
+            MultipartFile multipartFile,
+            List<Integer> categoryIds,
+            List<String> holidayCodes)
             throws IOException {
 
         // 画像の更新処理
@@ -136,8 +148,13 @@ public class RestaurantService {
             restaurant.setImage(hashedImageName);
         }
 
+        System.out.println("現在の画像 :" + restaurant.getImage());
+
         // 情報の更新
         restaurantRepository.save(restaurant);
+
+        // 休日と店舗の対比関係を保存する
+        holidayService.updateHolidays(holidayCodes, restaurant);
 
         // カテゴリーと店舗の対比関係を更新する
         restaurantCategoryService.updateCategories(restaurant, categoryIds);

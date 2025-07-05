@@ -21,6 +21,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.nagoyameshi.entity.Category;
+import com.example.nagoyameshi.entity.DayType;
+import com.example.nagoyameshi.entity.Holiday;
 import com.example.nagoyameshi.entity.Restaurant;
 import com.example.nagoyameshi.exception.DuplicateRestaurantNameException;
 import com.example.nagoyameshi.exception.ImageStorageException;
@@ -30,25 +32,31 @@ import com.example.nagoyameshi.form.RestaurantEditForm;
 import com.example.nagoyameshi.form.RestaurantRegisterForm;
 import com.example.nagoyameshi.repository.CategoryRepository;
 import com.example.nagoyameshi.service.CategoryService;
+import com.example.nagoyameshi.service.HolidayService;
 import com.example.nagoyameshi.service.RestaurantCategoryService;
 import com.example.nagoyameshi.service.RestaurantService;
 
 @Controller
 public class AdminRestaurantController {
 
+    // DIするクラスたち
     private final CategoryRepository categoryRepository;
-
     private final CategoryService categoryService;
     private final RestaurantService restaurantService;
     private final RestaurantCategoryService restaurantCategoryService;
+    private final HolidayService holidayService;
 
+    // コンストラクタインジェクション
     public AdminRestaurantController(RestaurantService restaurantService,
             RestaurantCategoryService restaurantCategoryService,
-            CategoryService categoryService, CategoryRepository categoryRepository) {
+            CategoryService categoryService,
+            CategoryRepository categoryRepository,
+            HolidayService holidayService) {
         this.restaurantService = restaurantService;
         this.restaurantCategoryService = restaurantCategoryService;
         this.categoryService = categoryService;
         this.categoryRepository = categoryRepository;
+        this.holidayService = holidayService;
     }
 
     // 管理者用店舗一覧画面
@@ -74,18 +82,21 @@ public class AdminRestaurantController {
 
     // 管理者用店舗詳細情報画面
     @GetMapping("/admin/restaurants/{id}")
-    public String getMethodName(@PathVariable(value = "id") Integer id,
+    public String show(@PathVariable(value = "id") Integer id,
             RedirectAttributes redirectAttributes, Model model) {
 
         // 店舗のデーター
         Restaurant restaurant = new Restaurant();
         // 店舗が所属しているカテゴリーのリスト
         List<Category> categoryList = new ArrayList<>();
+        // 店舗に設定している休日情報のリスト
+        List<Holiday> holidayList = new ArrayList<>();
 
         // ビューに送る店舗エンティティを用意
         try {
             restaurant = restaurantService.findRestaurantById(id);
             categoryList = restaurantCategoryService.findCategoriesByRestaurant(restaurant);
+            holidayList = holidayService.findHolidaysByRestaurant(restaurant);
         } catch (RestaurantNotFoundException e) {
             redirectAttributes.addFlashAttribute("errorMessage", "店舗が存在しません。");
             System.err.println(e.getMessage());
@@ -93,6 +104,7 @@ public class AdminRestaurantController {
             return "redirect:/admin/restaurants";
         }
 
+        model.addAttribute("holidays", holidayList);
         model.addAttribute("categoryList", categoryList);
         model.addAttribute("restaurant", restaurant);
 
@@ -103,6 +115,8 @@ public class AdminRestaurantController {
     @GetMapping("/admin/restaurants/register")
     public String register(@ModelAttribute RestaurantRegisterForm restaurantRegisterForm,
             Model model) {
+
+        model.addAttribute("regularHolidays", DayType.values());
         model.addAttribute("categoryList", categoryService.findAllCategoriesList());
         return "admin/restaurants/register";
     }
@@ -118,6 +132,8 @@ public class AdminRestaurantController {
         boolean hasErrors = false;
         // カテゴリーIdの入れ物
         List<Integer> categoryIds = new ArrayList<>();
+        // 店舗に設定している休日情報のリスト
+        List<String> holidayCodes = new ArrayList<>();
 
         // ◆各条件に一つでも合致したら、エラーフラグをONにする◆
 
@@ -155,6 +171,9 @@ public class AdminRestaurantController {
 
         // エラーフラグがONになっている場合には、情報入力画面にもどる
         if (hasErrors) {
+
+            model.addAttribute("categoryList", categoryService.findAllCategoriesList());
+            model.addAttribute("regularHolidays", DayType.values());
             return "admin/restaurants/register";
         }
 
@@ -174,16 +193,23 @@ public class AdminRestaurantController {
         restaurant.setLowestPrice(registerForm.getLowestPrice());
         restaurant.setSeatingCapacity(registerForm.getSeatingCapacity());
 
+        // 休日情報を、専用のフィールドに格納
+        holidayCodes = registerForm.getHolidayCodes();
+
         // 店舗情報の登録
         try {
-            restaurantService.createRestaurant(restaurant, registerForm.getImageFile(), categoryIds);
+            restaurantService.createRestaurant(restaurant, registerForm.getImageFile(), categoryIds, holidayCodes);
         } catch (DuplicateRestaurantNameException e) {
             System.err.println(e.getMessage());
+
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
             return "redirect:/admin/restaurants";
         } catch (IOException e) {
             System.err.println(new ImageStorageException("画像の保存に失敗しました。", e));
             bindingResult.reject("general.error", "予期せぬエラーが発生しました。もう一度お試しください。");
+
+            model.addAttribute("categoryList", categoryService.findAllCategoriesList());
+            model.addAttribute("regularHolidays", DayType.values());
             return "admin/restaurants/register";
         }
 
@@ -202,6 +228,8 @@ public class AdminRestaurantController {
         Restaurant restaurant = new Restaurant();
         // 店舗と紐づいているカテゴリーのリスト
         List<Category> selectedCategoryList = new ArrayList<>();
+        // 店舗に設定している休日情報のリスト
+        List<String> holidayCodes = new ArrayList<>();
 
         // カテゴリーの一覧マスタ
         List<Category> categoryList = categoryService.findAllCategoriesList();
@@ -210,6 +238,7 @@ public class AdminRestaurantController {
         try {
             restaurant = restaurantService.findRestaurantById(id);
             selectedCategoryList = restaurantCategoryService.findCategoriesByRestaurant(restaurant);
+            holidayCodes = holidayService.extractHolidayCodes(restaurant);
         } catch (RestaurantNotFoundException e) {
 
             System.err.println(e.getMessage());
@@ -235,6 +264,9 @@ public class AdminRestaurantController {
         restaurantEditForm.setLowestPrice(restaurant.getLowestPrice());
         restaurantEditForm.setSeatingCapacity(restaurant.getSeatingCapacity());
 
+        // 休日情報をフォームクラスにセット
+        restaurantEditForm.setHolidayCodes(holidayCodes);
+
         // カテゴリー1~3をフォームクラスにセット
         if (selectedCategoryList.size() > 0)
             restaurantEditForm.setCategoryId1(selectedCategoryList.get(0).getId());
@@ -243,6 +275,7 @@ public class AdminRestaurantController {
         if (selectedCategoryList.size() > 2)
             restaurantEditForm.setCategoryId3(selectedCategoryList.get(2).getId());
 
+        model.addAttribute("regularHolidays", DayType.values());
         model.addAttribute("categoryList", categoryList);
         model.addAttribute("restaurantEditForm", restaurantEditForm);
         model.addAttribute("restaurant", restaurant);
@@ -265,6 +298,9 @@ public class AdminRestaurantController {
 
         // カテゴリーのマスタ
         List<Category> categoryList = categoryService.findAllCategoriesList();
+
+        // 店舗に設定している休日情報のリスト
+        List<String> holidayCodes = new ArrayList<>();
 
         // ◆各条件に一つでも合致したら、エラーフラグをONにする◆
 
@@ -327,9 +363,13 @@ public class AdminRestaurantController {
         restaurant.setLowestPrice(editForm.getLowestPrice());
         restaurant.setSeatingCapacity(editForm.getSeatingCapacity());
 
+        // 休日情報を、専用のフィールドに格納
+        holidayCodes = editForm.getHolidayCodes();
+
         // エラーフラグがONになっている場合には、情報入力画面にもどる
         if (hasErrors) {
 
+            model.addAttribute("regularHolidays", DayType.values());
             model.addAttribute("categoryList", categoryList);
             model.addAttribute("restaurant", restaurant);
             return "admin/restaurants/edit";
@@ -340,9 +380,9 @@ public class AdminRestaurantController {
             MultipartFile imagFile = editForm.getImageFile();
             if (imagFile == null || imagFile.isEmpty()) {
                 restaurant.setImage(editForm.getCurrentImageFileName());
-                restaurantService.updateRestaurant(restaurant, null, categoryIds);
+                restaurantService.updateRestaurant(restaurant, null, categoryIds, holidayCodes);
             } else {
-                restaurantService.updateRestaurant(restaurant, editForm.getImageFile(), categoryIds);
+                restaurantService.updateRestaurant(restaurant, editForm.getImageFile(), categoryIds, holidayCodes);
             }
         } catch (
 
@@ -350,6 +390,7 @@ public class AdminRestaurantController {
             System.err.println(new ImageStorageException("画像の保存に失敗しました。", e));
             bindingResult.reject("general.error", "予期せぬエラーが発生しました。もう一度お試しください。");
 
+            model.addAttribute("regularHolidays", DayType.values());
             model.addAttribute("categoryList", categoryList);
             model.addAttribute("restaurant", restaurant);
             return "admin/restaurants/edit";

@@ -3,15 +3,19 @@ package com.example.nagoyameshi.entity;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import jakarta.persistence.Id;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,7 +30,7 @@ public class Restaurant {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
-    
+
     @Column(name = "name")
     private String name;
 
@@ -69,8 +73,8 @@ public class Restaurant {
     @Column(name = "rating")
     private BigDecimal rating = BigDecimal.ZERO;
 
-    @Column(name = "regularHoliday")
-    private String regularHoliday;
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Holiday> Holidays = new ArrayList<>();
 
     @Column(name = "createdAt")
     @CreationTimestamp

@@ -148,6 +148,23 @@
 
                                     <div class="row pb-2 mb-2 border-bottom">
                                         <div class="col-2">
+                                            <span class="fw-bold">定休日</span>
+                                        </div>
+
+                                        <div class="col">
+                                            <div th:if="${!restaurant.holidays.isEmpty()}">
+                                                <span th:each="holiday, stat : ${restaurant.holidays}"
+                                                    th:text="|${stat.first ? holiday.dayType.label : '、' + holiday.dayType.label}|"></span>
+                                            </div>
+
+                                            <div th:if="${restaurant.holidays.isEmpty()}">
+                                                <span>年中無休</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row pb-2 mb-2 border-bottom">
+                                        <div class="col-2">
                                             <span class="fw-bold">座席数</span>
                                         </div>
 
