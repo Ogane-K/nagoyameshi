@@ -1,8 +1,5 @@
 package com.example.nagoyameshi.entity;
 
-import jakarta.persistence.Entity;
-
-
 public enum DayType {
 
     MONDAY("月曜日"),

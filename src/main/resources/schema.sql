@@ -71,3 +71,24 @@ CREATE TABLE IF NOT EXISTS holidays (
     CONSTRAINT fk_holidays_restaurant FOREIGN KEY (restaurant_id) REFERENCES restaurants(id) ON DELETE CASCADE,
     CONSTRAINT uc_restaurant_day UNIQUE (restaurant_id, day_type)
 );
+CREATE TABLE IF NOT EXISTS companies (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    postal_code VARCHAR(50) NOT NULL,
+    address VARCHAR(255) NOT NULL,
+    latitude DECIMAL(10, 8),
+    longitude DECIMAL(11, 8),
+    representative VARCHAR(50) NOT NULL,
+    establishment_date VARCHAR(50) NOT NULL,
+    capital VARCHAR(50) NOT NULL,
+    business VARCHAR(255) NOT NULL,
+    number_of_employees VARCHAR(50) NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS terms (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    content TEXT NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);

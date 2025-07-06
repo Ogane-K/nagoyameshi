@@ -27,7 +27,6 @@ import com.example.nagoyameshi.entity.Restaurant;
 import com.example.nagoyameshi.exception.DuplicateRestaurantNameException;
 import com.example.nagoyameshi.exception.ImageStorageException;
 import com.example.nagoyameshi.exception.RestaurantNotFoundException;
-import com.example.nagoyameshi.exception.UserNotFoundException;
 import com.example.nagoyameshi.form.RestaurantEditForm;
 import com.example.nagoyameshi.form.RestaurantRegisterForm;
 import com.example.nagoyameshi.repository.CategoryRepository;
