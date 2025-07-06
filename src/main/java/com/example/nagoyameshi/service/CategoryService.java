@@ -21,6 +21,7 @@ public class CategoryService {
         this.categoryRepository = categoryRepository;
     }
 
+    // すべてのカテゴリーのリストを取得
     public List<Category> findAllCategoriesList() {
         return categoryRepository.findAll();
     }
@@ -28,6 +29,12 @@ public class CategoryService {
     // すべてのカテゴリをページングされた状態で取得する。
     public Page<Category> findAllCategories(Pageable pageable) {
         return categoryRepository.findAll(pageable);
+    }
+
+    // 指定されたカテゴリー名を持つ最初のカテゴリーを取得する
+    public Category findCategoryByKeyword(String keyword) {
+        return categoryRepository.findFirstByName(keyword)
+                .orElseThrow(() -> new EntityNotFoundException("カテゴリが見つかりませんでした keyword: " + keyword));
     }
 
     // 指定されたキーワードをカテゴリ名に含むカテゴリを、ページングされた状態で取得する。

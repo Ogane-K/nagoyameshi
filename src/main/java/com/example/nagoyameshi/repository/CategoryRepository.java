@@ -21,4 +21,7 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
     // IDが最大のカテゴリを1件取得
     Optional<Category> findFirstByOrderByIdDesc();
 
+    // 指定されたキーワードの最初のカテゴリーを取得
+    Optional<Category> findFirstByName(String name);
+
 }

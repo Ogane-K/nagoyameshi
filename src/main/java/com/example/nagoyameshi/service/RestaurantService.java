@@ -41,6 +41,16 @@ public class RestaurantService {
         return restaurantRepository.findAll(pageable);
     }
 
+    // 全店舗を作成日時が新しい順にページングされた状態で取得
+    public Page<Restaurant> findAllRestaurantsByOrderByCreatedAtDesc(Pageable pageable) {
+        return restaurantRepository.findAllByOrderByCreatedAtDesc(pageable);
+    }
+
+    // ランダムに6件取得
+    public List<Restaurant> findRandom6Restaurants() {
+        return restaurantRepository.findRandom6Restaurants();
+    }
+
     // 指定されたキーワードを店舗名に含む店舗を、ページングされた状態で取得
     public Page<Restaurant> findRestaurantsByNameLike(String keyword, Pageable pageable) {
         return restaurantRepository.findBynameContaining(keyword, pageable);
