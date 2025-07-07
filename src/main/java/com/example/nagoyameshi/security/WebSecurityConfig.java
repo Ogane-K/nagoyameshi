@@ -2,6 +2,7 @@ package com.example.nagoyameshi.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -23,6 +24,20 @@ public class WebSecurityConfig {
                                                                 "/images/**",
                                                                 "/storage/**", "/signup/**", "/verify/**")
                                                 .permitAll()
+                                                .requestMatchers("/restaurants/**")
+                                                .access((authentication, context) -> {
+                                                        var auth = authentication.get();
+                                                        if (!auth.isAuthenticated())
+                                                                return new AuthorizationDecision(true); // 未ログインOK
+                                                        return new AuthorizationDecision(
+                                                                        auth.getAuthorities().stream()
+                                                                                        .anyMatch(authority -> authority
+                                                                                                        .getAuthority()
+                                                                                                        .equals("ROLE_FREE_MEMBER") //無料会員OK
+                                                                                                        ||
+                                                                                                        authority.getAuthority()
+                                                                                                                        .equals("ROLE_PAID_MEMBER"))); //有料会員OK
+                                                })
                                                 .requestMatchers("/admin/**").hasRole("ADMIN") // 全ユーザーにアクセスを許可するURL
                                                 .anyRequest().authenticated() // 上記以外のURLはログインが必要（ロールを問わない）
                                 )
