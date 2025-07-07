@@ -13,6 +13,8 @@ import com.example.nagoyameshi.entity.Role;
 import com.example.nagoyameshi.entity.User;
 import com.example.nagoyameshi.entity.UserRole;
 import com.example.nagoyameshi.entity.UserRoleId;
+import com.example.nagoyameshi.form.UserEditForm;
+import com.example.nagoyameshi.mapper.UserMapper;
 import com.example.nagoyameshi.repository.RoleRepository;
 import com.example.nagoyameshi.repository.UserRepository;
 import com.example.nagoyameshi.repository.UserRoleRepository;
@@ -99,7 +101,25 @@ public class UserService {
 
         // ユーザーとロールの紐づけ情報をDBに保存
         userRoleRepository.save(userRole);
+    }
 
+    // ユーザー情報の更新 メールアドレスがすでに存在しているものなら、失敗としてtrueを返す
+    public boolean updateUser(UserEditForm form, Integer id) {
+
+        User user = userRepository.findById(id).orElseThrow();
+
+        String oldEmail = user.getEmail();
+
+        user = UserMapper.mapToEntity(form, user);
+
+        String newEmail = user.getEmail();
+
+        if (!newEmail.equals(oldEmail) && userRepository.existsByEmail(user.getEmail())) {
+            return false;
+        }
+
+        userRepository.save(user);
+        return true;
     }
 
     // メールアドレスが既に登録されているか されているならtrue
