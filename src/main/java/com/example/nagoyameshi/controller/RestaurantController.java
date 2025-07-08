@@ -1,5 +1,8 @@
 package com.example.nagoyameshi.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
@@ -7,22 +10,39 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.nagoyameshi.entity.Category;
+import com.example.nagoyameshi.entity.Holiday;
 import com.example.nagoyameshi.entity.Restaurant;
+import com.example.nagoyameshi.exception.RestaurantNotFoundException;
 import com.example.nagoyameshi.service.CategoryService;
+import com.example.nagoyameshi.service.HolidayService;
+import com.example.nagoyameshi.service.RestaurantCategoryService;
 import com.example.nagoyameshi.service.RestaurantSerchService;
+import com.example.nagoyameshi.service.RestaurantService;
 
 @Controller
 public class RestaurantController {
 
+    private final RestaurantService restaurantService;
     private final RestaurantSerchService restaurantSerchService;
     private final CategoryService categoryService;
+    private final HolidayService holidayService;
+    private final RestaurantCategoryService restaurantCategoryService;
 
     public RestaurantController(RestaurantSerchService restaurantSerchService,
-            CategoryService categoryService) {
+            CategoryService categoryService,
+            RestaurantService restaurantService,
+            HolidayService holidayService,
+            RestaurantCategoryService restaurantCategoryService) {
         this.restaurantSerchService = restaurantSerchService;
         this.categoryService = categoryService;
+        this.restaurantService = restaurantService;
+        this.holidayService = holidayService;
+        this.restaurantCategoryService = restaurantCategoryService;
     }
 
     @GetMapping("/restaurants")
@@ -80,4 +100,37 @@ public class RestaurantController {
         return "restaurants/index";
 
     }
+
+    // 店舗詳細情報の表示
+    @GetMapping("/restaurants/{id}")
+    public String getMethodName(@PathVariable(value = "id") Integer id,
+            RedirectAttributes redirectAttributes,
+            Model model) {
+
+        // 店舗のデーター
+        Restaurant restaurant = new Restaurant();
+        // 店舗が所属しているカテゴリーのリスト
+        List<Category> categoryList = new ArrayList<>();
+        // 店舗に設定している休日情報のリスト
+        List<Holiday> holidayList = new ArrayList<>();
+
+        // ビューに送る店舗エンティティを用意
+        try {
+            restaurant = restaurantService.findRestaurantById(id);
+            categoryList = restaurantCategoryService.findCategoriesByRestaurant(restaurant);
+            holidayList = holidayService.findHolidaysByRestaurant(restaurant);
+        } catch (RestaurantNotFoundException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "店舗が存在しません。");
+            System.err.println(e.getMessage());
+
+            return "redirect:/restaurants";
+        }
+
+        model.addAttribute("restaurant", restaurant);
+        model.addAttribute("categoryList", categoryList);
+        model.addAttribute("holidayList", holidayList);
+
+        return "restaurants/show";
+    }
+
 }

@@ -25,18 +25,11 @@ public class WebSecurityConfig {
                                                                 "/storage/**", "/signup/**", "/verify/**")
                                                 .permitAll()
                                                 .requestMatchers("/restaurants/**")
-                                                .access((authentication, context) -> {
-                                                        var auth = authentication.get();
-                                                        if (!auth.isAuthenticated())
-                                                                return new AuthorizationDecision(true); // 未ログインOK
-                                                        return new AuthorizationDecision(
-                                                                        auth.getAuthorities().stream()
-                                                                                        .anyMatch(authority -> authority
-                                                                                                        .getAuthority()
-                                                                                                        .equals("ROLE_FREE_MEMBER") //無料会員OK
-                                                                                                        ||
-                                                                                                        authority.getAuthority()
-                                                                                                                        .equals("ROLE_PAID_MEMBER"))); //有料会員OK
+                                                .access((authz, context) -> {
+                                                        var authResult = authz.get().getAuthorities().stream()
+                                                                        .noneMatch(a -> a.getAuthority()
+                                                                                        .equals("ROLE_ADMIN"));//管理者のみアクセス禁止
+                                                        return new AuthorizationDecision(authResult);
                                                 })
                                                 .requestMatchers("/admin/**").hasRole("ADMIN") // 全ユーザーにアクセスを許可するURL
                                                 .anyRequest().authenticated() // 上記以外のURLはログインが必要（ロールを問わない）
