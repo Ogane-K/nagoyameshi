@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <div th:replace="~{fragment :: meta}"></div>
+
+    <meta http-equiv="Content-Security-Policy"
+        content="script-src 'self' https://js.stripe.com https://cdn.jsdelivr.net; frame-src https://js.stripe.com https://hooks.stripe.com https://checkout.stripe.com;">
+
+    <div th:replace="~{fragment :: styles}"></div>
+
+    <title>解約完了</title>
+</head>
+
+<body>
+    <div class="nagoyameshi-wrapper">
+        <div th:replace="~{fragment :: header}"></div>
+
+        <main>
+            <div class="container pb-5 nagoyameshi-container">
+                <div class="row justify-content-center">
+                    <div class="col-xl-6 col-lg-7 col-md-9">
+                        <nav class="my-3" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                            <ol class="breadcrumb mb-0">
+                                <li class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">解約完了</li>
+                            </ol>
+                        </nav>
+
+                        <div class="text-center mt-5 mb-5">
+                            <h1 class="mb-4">ご利用ありがとうございました！</h1>
+                            <p>有料プランの解約手続きが完了しました。</p>
+                            <p>今後ともサービスをご利用いただけますと幸いです。</p>
+                            <a th:href="@{/}" class="btn btn-primary mt-4">トップページへ戻る</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <div th:replace="~{fragment :: footer}"></div>
+    </div>
+
+    <div th:replace="~{fragment :: scripts}"></div>
+</body>
+
+</html>

@@ -62,4 +62,6 @@ public class User {
     @Column(name = "deleted_at", insertable = false, updatable = false)
     private Timestamp deletedAt;
 
+    private String stripeCustomerId;
+
 }

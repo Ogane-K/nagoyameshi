@@ -14,4 +14,7 @@ public interface UserRoleRepository extends JpaRepository<UserRole, UserRoleId> 
 
     // userに基づいて検索
     List<UserRole> findByUser(User user);
+
+    public void deleteByUser(User user);
+
 }

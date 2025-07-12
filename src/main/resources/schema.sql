@@ -12,7 +12,8 @@ CREATE TABLE IF NOT EXISTS users (
     occupation VARCHAR(50),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    deleted_at TIMESTAMP NULL
+    deleted_at TIMESTAMP NULL,
+    stripe_customer_id VARCHAR (255)
 );
 CREATE TABLE IF NOT EXISTS roles (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -91,4 +92,39 @@ CREATE TABLE IF NOT EXISTS terms (
     content TEXT NOT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS plans (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255),
+    stripe_price_id VARCHAR(255),
+    price_yen INT(255),
+    plan_interval VARCHAR(255),
+    description TEXT
+);
+CREATE TABLE IF NOT EXISTS payments (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    payment_method_id VARCHAR(255),
+    card_brand VARCHAR(255),
+    last4_number VARCHAR(255),
+    exp_month INT(255),
+    exp_year INT(255),
+    is_default BOOLEAN,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    CONSTRAINT fk_payment_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+CREATE TABLE If NOT EXISTS subscriptions (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT,
+    stripe_subscription_id VARCHAR(255),
+    plan_id INT,
+    payment_id INT,
+    start_date TIMESTAMP NULL,
+    current_period_end TIMESTAMP NULL,
+    canceled_At TIMESTAMP NULL,
+    is_canceled BOOLEAN,
+    stripe_status VARCHAR(255),
+    CONSTRAINT fk_subscription_user FOREIGN KEY (user_id) REFERENCES users(id),
+    CONSTRAINT fk_subscription_plan FOREIGN KEY (plan_id) REFERENCES plans(id),
+    CONSTRAINT fk_subscription_payment FOREIGN KEY (payment_id) REFERENCES payments(id)
 );

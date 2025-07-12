@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <div th:replace="~{fragment :: meta}"></div>
+
+    <meta http-equiv="Content-Security-Policy"
+        content="script-src 'self' https://js.stripe.com https://cdn.jsdelivr.net; frame-src https://js.stripe.com https://hooks.stripe.com https://checkout.stripe.com;">
+
+    <div th:replace="~{fragment :: styles}"></div>
+
+    <title>有料プラン登録</title>
+</head>
+
+<body th:data-stripe-key="${stripePublicKey}">
+    <div class="nagoyameshi-wrapper">
+        <div th:replace="~{fragment :: header}"></div>
+
+        <main>
+            <div class="container pb-5 nagoyameshi-container">
+                <div class="row justify-content-center">
+                    <div class="col-xl-5 col-lg-6 col-md-8">
+                        <nav class="my-3" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                            <ol class="breadcrumb mb-0">
+                                <li class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">有料プラン登録</li>
+                            </ol>
+                        </nav>
+
+                        <h1 class="mb-3 text-center">有料プラン登録</h1>
+
+                        <div th:if="${subscriptionMessage}" class="alert alert-info" role="alert">
+                            <span th:text="${subscriptionMessage}"></span>
+                        </div>
+
+                        <form id="checkout-form">
+                            <div class="row">
+                                <!-- 300円プラン -->
+                                <div class="col-md-6">
+                                    <div class="card p-4 mb-4">
+                                        <h3>月額300円プラン</h3>
+                                        <div class="text-end">
+                                            <strong class="text-danger fs-4">¥300</strong>
+                                        </div>
+                                        <ul class="list-unstyled mt-3">
+                                            <li class="list-group-item">・当日の2時間前までならいつでも予約可能</li>
+                                            <li class="list-group-item">・店舗をお好きなだけお気に入りに追加可能</li>
+                                            <li class="list-group-item">・レビューを全件閲覧可能</li>
+                                            <li class="list-group-item">・レビューを投稿可能</li>
+                                            <li class="list-group-item">・月額たったの300円</li>
+                                        </ul>
+                                        <div class="form-check mt-3">
+                                            <input class="form-check-input" type="radio" name="planId" id="plan300"
+                                                value="1" checked>
+                                            <label class="form-check-label" for="plan300">このプランを選択</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 500円プラン -->
+                                <div class="col-md-6">
+                                    <div class="card p-4 mb-4">
+                                        <h3>月額500円プラン</h3>
+                                        <div class="text-end">
+                                            <strong class="text-primary fs-4">¥500</strong>
+                                        </div>
+                                        <ul class="list-unstyled mt-3">
+                                            <li class="list-group-item">・当日の2時間前までならいつでも予約可能</li>
+                                            <li class="list-group-item">・店舗をお好きなだけお気に入りに追加可能</li>
+                                            <li class="list-group-item">・レビューを全件閲覧可能</li>
+                                            <li class="list-group-item">・レビューを投稿可能</li>
+                                            <li class="list-group-item">・月額たったの500円</li>
+                                        </ul>
+                                        <div class="form-check mt-3">
+                                            <input class="form-check-input" type="radio" name="planId" id="plan500"
+                                                value="2">
+                                            <label class="form-check-label" for="plan500">このプランを選択</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 利用規約のチェックボックス -->
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="agreeTerms" required>
+                                <label class="form-check-label" for="agreeTerms">
+                                    <a href="/terms" target="_blank">利用規約</a>に同意します
+                                </label>
+                            </div>
+
+                            <!-- 登録ボタン -->
+                            <div class="d-flex justify-content-center">
+                                <button class="btn btn-primary w-50" type="submit">登録</button>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <div th:replace="~{fragment :: footer}"></div>
+    </div>
+
+    <div th:replace="~{fragment :: scripts}"></div>
+    <script src="https://js.stripe.com/v3"></script>
+    <script th:src="@{/js/stripe.js}"></script>
+</body>
+
+</html>

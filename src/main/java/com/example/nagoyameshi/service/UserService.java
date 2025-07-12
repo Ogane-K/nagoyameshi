@@ -1,7 +1,15 @@
 package com.example.nagoyameshi.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -155,6 +163,23 @@ public class UserService {
     // 氏名またはフリガナの一部と合致するユーザーをページングされた状態で取得する
     public Page<User> seachUsersByNameOrFurigana(String keyword, Pageable pageable) {
         return userRepository.findByNameContainingIgnoreCaseOrFuriganaContainingIgnoreCase(keyword, keyword, pageable);
+    }
+
+    // ★認証系メソッド★
+
+    //　ログイン中のロールを更新する
+    public void refreshAuthenticationByRole(String newRole) {
+        // 現在の認証情報を取得する
+        Authentication currentAuthentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // 新しい認証情報を作成する
+        List<SimpleGrantedAuthority> simpleGrantedAuthorities = new ArrayList<>();
+        simpleGrantedAuthorities.add(new SimpleGrantedAuthority(newRole));
+        Authentication newAuthentication = new UsernamePasswordAuthenticationToken(currentAuthentication.getPrincipal(),
+                currentAuthentication.getCredentials(), simpleGrantedAuthorities);
+
+        // 認証情報を更新する
+        SecurityContextHolder.getContext().setAuthentication(newAuthentication);
     }
 
 }

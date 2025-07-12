@@ -70,7 +70,7 @@
                             </li>
 
                             <!-- 有料会員であれば表示する -->
-                            <li class="nav-item dropdown" sec:authorize="hasRole('ROLE_PAID_MEMBER')">
+                            <li class="nav-item dropdown" sec:authorize="hasRole('ROLE_PREMIUM_MEMBER')">
                                 <a id="navbarDropdownGeneral" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     <span sec:authentication="principal.user.name"></span>
                                 </a>

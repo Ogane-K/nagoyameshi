@@ -24,11 +24,12 @@ public class WebSecurityConfig {
                                                                 "/images/**",
                                                                 "/storage/**", "/signup/**", "/verify/**")
                                                 .permitAll()
+                                                .requestMatchers("/api/stripe/**","/webhook/**").permitAll()
                                                 .requestMatchers("/restaurants/**")
                                                 .access((authz, context) -> {
                                                         var authResult = authz.get().getAuthorities().stream()
                                                                         .noneMatch(a -> a.getAuthority()
-                                                                                        .equals("ROLE_ADMIN"));//管理者のみアクセス禁止
+                                                                                        .equals("ROLE_ADMIN"));// 管理者のみアクセス禁止
                                                         return new AuthorizationDecision(authResult);
                                                 })
                                                 .requestMatchers("/admin/**").hasRole("ADMIN") // 全ユーザーにアクセスを許可するURL
@@ -42,7 +43,9 @@ public class WebSecurityConfig {
                                                 .permitAll())
                                 .logout((logout) -> logout
                                                 .logoutSuccessUrl("/?loggedOut") // ログアウト時のリダイレクト先URL
-                                                .permitAll());
+                                                .permitAll())
+                                .csrf(csrf -> csrf
+                                                .ignoringRequestMatchers("/api/stripe/**","/webhook/**"));
 
                 return http.build();
         }

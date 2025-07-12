@@ -1,9 +1,11 @@
 INSERT IGNORE INTO roles (id, name)
 VALUES (1, 'ROLE_ADMIN');
 INSERT IGNORE INTO roles (id, name)
-VALUES (2, 'ROLE_MEMBER');
+VALUES (2, 'ROLE_FREE_MEMBER');
 INSERT IGNORE INTO roles (id, name)
-VALUES (3, 'ROLE_PREMIUM');
+VALUES (3, 'ROLE_PREMIUM_MEMBER');
+INSERT IGNORE INTO roles (id, name)
+VALUES (4, 'ROLE_SUPER_PREMIUM_MEMBER');
 INSERT IGNORE INTO users (
         id,
         name,
@@ -806,3 +808,23 @@ VALUES (
         0,
         4.3
     );
+INSERT IGNORE INTO plans (
+        id,
+        name,
+        stripe_price_id,
+        price_yen,
+        `plan_interval`
+        )
+VALUES (
+        1,
+        'premium',
+        'price_1RjXr3BBdYnXts63snSFL2nq',
+        300,
+        'month'
+    ),(
+        2,
+        'super_premium',
+        'price_1RjkMQBBdYnXts639P77tBGx',
+        500,
+        'month'
+    )
