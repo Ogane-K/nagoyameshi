@@ -27,6 +27,12 @@
 
                         <h1 class="mb-2 text-center" th:text="${restaurant.name}"></h1>
 
+                        <p class="text-center">
+                            <span class="nagoyameshi-star-rating me-1"
+                                th:data-rate="${#numbers.formatDecimal(restaurant.rating, 1, 'COMMA', 1, 'POINT')}"></span>
+                            <span th:text="${#numbers.formatDecimal(restaurant.rating, 1, 'COMMA', 2, 'POINT')}"></span>
+                        </p>
+
                         <div th:if="${successMessage}" class="alert alert-info">
                             <span th:text="${successMessage}"></span>
                         </div>
@@ -161,11 +167,11 @@
                                     </span>
                                     <span th:if="${categoryList == null or categoryList.isEmpty()}">未設定</span>
                                 </div>
-                            </div>
-                            </th>
                         </div>
+                        </th>
                     </div>
                 </div>
+            </div>
         </main>
 
         <div th:replace="~{fragment :: footer}"></div>

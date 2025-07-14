@@ -24,7 +24,9 @@ public class WebSecurityConfig {
                                                                 "/images/**",
                                                                 "/storage/**", "/signup/**", "/verify/**")
                                                 .permitAll()
-                                                .requestMatchers("/api/stripe/**","/webhook/**").permitAll()
+                                                .requestMatchers("/api/stripe/**", "/webhook/**").permitAll()
+                                                .requestMatchers("/restaurants/*/reviews/**")
+                                                .hasAnyRole("PREMIUM_MEMBER", "SUPER_PREMIUM_MEMBER", "FREE_MEMBER")
                                                 .requestMatchers("/restaurants/**")
                                                 .access((authz, context) -> {
                                                         var authResult = authz.get().getAuthorities().stream()
@@ -45,7 +47,7 @@ public class WebSecurityConfig {
                                                 .logoutSuccessUrl("/?loggedOut") // ログアウト時のリダイレクト先URL
                                                 .permitAll())
                                 .csrf(csrf -> csrf
-                                                .ignoringRequestMatchers("/api/stripe/**","/webhook/**"));
+                                                .ignoringRequestMatchers("/api/stripe/**", "/webhook/**"));
 
                 return http.build();
         }

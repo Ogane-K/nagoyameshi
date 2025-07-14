@@ -1,5 +1,6 @@
 package com.example.nagoyameshi.service;
 
+import org.hibernate.query.NativeQuery.ReturnProperty;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -62,6 +63,27 @@ public class RestaurantSerchService {
     // 8.指定価格以下×価格順
     public Page<Restaurant> findRestaurantsByMaxPriceOrderByLowestPriceAsc(Integer maxPrice, Pageable pageable) {
         return restaurantRepository.findByMaxPriceOrderByLowestPriceAsc(maxPrice, pageable);
+    }
+
+    // 平均レビュースコアが高い店舗順に並べ替えてページング
+    public Page<Restaurant> findAllRestaurantsByOrderByRatingDesc(Pageable pageable) {
+        return restaurantRepository.findAllByOrderByRatingDesc(pageable);
+    }
+
+    // 指定されたキーワードを店舗名または住所またはカテゴリ名に含む店舗を平均評価が高い順に並べ替え、ページングされた状態で取得する
+    public Page<Restaurant> serchhByKeywordsOrderByRating(String keyword, Pageable pageable) {
+        return restaurantRepository.searchByKeywordOrderByRatingDesc(keyword, pageable);
+    }
+
+    // 指定されたidのカテゴリが設定された店舗を平均評価が高い順に並べ替え、ページングされた状態で取得する。
+    public Page<Restaurant> findRestaurantsByCategoryIdOrderByRating(Integer id, Pageable pageable) {
+        return restaurantRepository.findByCategoryIdOrderByRatingDesc(id, pageable);
+    }
+
+    // 指定された最低価格以下の店舗を平均評価が高い順に並べ替え、ページングされた状態で取得する。
+    public Page<Restaurant> findRestaurantsByLowestPriceLessThanEqualOrderByRating(Integer lowestPrice,
+            Pageable pageable) {
+        return restaurantRepository.findByLowestPriceLessThanEqualOrderByRatingDesc(lowestPrice, pageable);
     }
 
 }

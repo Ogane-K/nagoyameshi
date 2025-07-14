@@ -14,6 +14,7 @@ import com.example.nagoyameshi.entity.Category;
 import com.example.nagoyameshi.entity.Restaurant;
 import com.example.nagoyameshi.exception.RestaurantNotFoundException;
 import com.example.nagoyameshi.service.CategoryService;
+import com.example.nagoyameshi.service.RestaurantSerchService;
 import com.example.nagoyameshi.service.RestaurantService;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -23,11 +24,14 @@ public class HomeController {
 
     private final RestaurantService restaurantService;
     private final CategoryService categoryService;
+    private final RestaurantSerchService restaurantSerchService;
 
     public HomeController(RestaurantService restaurantService,
-            CategoryService categoryService) {
+            CategoryService categoryService,
+            RestaurantSerchService restaurantSerchService) {
         this.restaurantService = restaurantService;
         this.categoryService = categoryService;
+        this.restaurantSerchService = restaurantSerchService;
     }
 
     @GetMapping("/")
@@ -35,7 +39,7 @@ public class HomeController {
 
         // ビューに渡すオブジェクトの作成
 
-        List<Restaurant> highlyRatedRestaurants = new ArrayList<>();
+        Page<Restaurant> highlyRatedRestaurants = null;
         Page<Restaurant> newRestaurant = Page.empty();
 
         List<Category> categories = new ArrayList<>();
@@ -51,7 +55,7 @@ public class HomeController {
 
         // 各要素の取得
         try {
-            highlyRatedRestaurants = restaurantService.findRandom6Restaurants();
+            highlyRatedRestaurants = restaurantSerchService.findAllRestaurantsByOrderByRatingDesc(pageable);
             newRestaurant = restaurantService.findAllRestaurantsByOrderByCreatedAtDesc(pageable);
 
             categories = categoryService.findAllCategoriesList();

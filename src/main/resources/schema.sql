@@ -113,7 +113,7 @@ CREATE TABLE IF NOT EXISTS payments (
     is_active BOOLEAN NOT NULL DEFAULT TRUE,
     CONSTRAINT fk_payment_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
-CREATE TABLE If NOT EXISTS subscriptions (
+CREATE TABLE IF NOT EXISTS subscriptions (
     id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT,
     stripe_subscription_id VARCHAR(255),
@@ -127,4 +127,18 @@ CREATE TABLE If NOT EXISTS subscriptions (
     CONSTRAINT fk_subscription_user FOREIGN KEY (user_id) REFERENCES users(id),
     CONSTRAINT fk_subscription_plan FOREIGN KEY (plan_id) REFERENCES plans(id),
     CONSTRAINT fk_subscription_payment FOREIGN KEY (payment_id) REFERENCES payments(id)
+);
+CREATE TABLE IF NOT EXISTS reviews (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    restaurant_id INT NOT NULL,
+    rating INT NOT NULL CHECK (
+        rating BETWEEN 1 AND 5
+    ),
+    comment TEXT NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_review_user FOREIGN KEY (user_id) REFERENCES users(id),
+    CONSTRAINT fk_review_restaurant FOREIGN KEY (restaurant_id) REFERENCES restaurants(id),
+    CONSTRAINT uq_user_restaurant UNIQUE (user_id, restaurant_id)
 );

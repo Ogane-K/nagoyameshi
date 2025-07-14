@@ -1,6 +1,7 @@
 package com.example.nagoyameshi.entity;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -91,4 +93,21 @@ public class Restaurant {
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<RestaurantCategory> categoriesRestaurants;
 
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private List<Review> reviews = new ArrayList<>();
+
+    @Transient
+    public BigDecimal getAverageScore() {
+        if (reviews == null || reviews.isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+
+        double avg = reviews.stream()
+                .mapToInt(Review::getScore)
+                .average()
+                .orElse(0.0);
+
+        return BigDecimal.valueOf(avg).setScale(1, RoundingMode.HALF_UP);
+
+    }
 }
