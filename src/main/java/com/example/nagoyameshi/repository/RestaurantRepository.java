@@ -111,7 +111,6 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Integer>
                         """)
         Page<Restaurant> findByCategoryIdOrderByRatingDesc(@Param("categoryId") Integer categoryId, Pageable pageable);
 
-
         // 指定された最低価格以下の店舗を平均評価が高い順に並べ替え、ページングされた状態で取得する。
         @Query("""
                             SELECT r FROM Restaurant r
@@ -121,4 +120,50 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Integer>
         Page<Restaurant> findByLowestPriceLessThanEqualOrderByRatingDesc(@Param("maxPrice") Integer maxPrice,
                         Pageable pageable);
 
+        // すべての店舗を予約数が多い順に並べ替え、ページングされた状態で取得
+        @Query("""
+                        SELECT r FROM Restaurant r
+                        LEFT JOIN r.reservations res
+                        GROUP BY r
+                        ORDER BY COUNT(res) DESC
+                        """)
+        Page<Restaurant> findAllOrderByReservationCountDesc(Pageable pageable);
+
+        // 指定されたキーワードを店舗名または住所またはカテゴリ名に含む店舗を予約数が多い順に並べ替え、ページングされた状態で取得
+        @Query("""
+                        SELECT DISTINCT r FROM Restaurant r
+                        LEFT JOIN r.reservations res
+                        LEFT JOIN r.categoriesRestaurants cr
+                        LEFT JOIN cr.category c
+                        WHERE r.name LIKE :keyword
+                        OR r.address LIKE :keyword
+                        OR c.name LIKE :keyword
+                        GROUP BY r
+                        ORDER BY COUNT(res) DESC
+                        """)
+        Page<Restaurant> findByKeywordOrderByReservationCountDesc(@Param("keyword") String keyword, Pageable pageable);
+
+        // 指定されたidのカテゴリが設定された店舗を予約数が多い順に並べ替え、ページングされた状態で取得
+        @Query("""
+                        SELECT DISTINCT r FROM Restaurant r
+                        LEFT JOIN r.reservations res
+                        LEFT JOIN r.categoriesRestaurants cr
+                        JOIN cr.category c
+                        WHERE c.id = :categoryId
+                        GROUP BY r
+                        ORDER BY COUNT(res) DESC
+                        """)
+        Page<Restaurant> findByCategoryIdOrderByReservationCountDesc(@Param("categoryId") Integer categoryId,
+                        Pageable pageable);
+
+        // 指定された最低価格以下の店舗を予約数が多い順に並べ替え、ページングされた状態で取得
+        @Query("""
+                        SELECT r FROM Restaurant r
+                        LEFT JOIN r.reservations res
+                        WHERE r.lowestPrice <= :maxPrice
+                        GROUP BY r
+                        ORDER BY COUNT(res) DESC
+                        """)
+        Page<Restaurant> findByPriceLessThanEqualOrderByReservationCountDesc(@Param("maxPrice") Integer maxPrice,
+                        Pageable pageable);
 }

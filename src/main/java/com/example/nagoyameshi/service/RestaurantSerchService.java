@@ -1,6 +1,5 @@
 package com.example.nagoyameshi.service;
 
-import org.hibernate.query.NativeQuery.ReturnProperty;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -14,15 +13,11 @@ import com.example.nagoyameshi.repository.RestaurantRepository;
 public class RestaurantSerchService {
 
     private final RestaurantRepository restaurantRepository;
-    private final CategoryRepository categoryRepository;
-    private final RestaurantCategoryRepository restaurantCategoryRepository;
 
     public RestaurantSerchService(RestaurantRepository restaurantRepository,
             CategoryRepository categoryRepository,
             RestaurantCategoryRepository restaurantCategoryRepository) {
         this.restaurantRepository = restaurantRepository;
-        this.categoryRepository = categoryRepository;
-        this.restaurantCategoryRepository = restaurantCategoryRepository;
     }
 
     // 1. 全件 × 新着順
@@ -65,25 +60,49 @@ public class RestaurantSerchService {
         return restaurantRepository.findByMaxPriceOrderByLowestPriceAsc(maxPrice, pageable);
     }
 
-    // 平均レビュースコアが高い店舗順に並べ替えてページング
+    // 9.全件×評価順
     public Page<Restaurant> findAllRestaurantsByOrderByRatingDesc(Pageable pageable) {
         return restaurantRepository.findAllByOrderByRatingDesc(pageable);
     }
 
-    // 指定されたキーワードを店舗名または住所またはカテゴリ名に含む店舗を平均評価が高い順に並べ替え、ページングされた状態で取得する
-    public Page<Restaurant> serchhByKeywordsOrderByRating(String keyword, Pageable pageable) {
+    // 10.キーワード×評価順
+    public Page<Restaurant> serchByKeywordsOrderByRating(String keyword, Pageable pageable) {
         return restaurantRepository.searchByKeywordOrderByRatingDesc(keyword, pageable);
     }
 
+    // 11.id×評価順
     // 指定されたidのカテゴリが設定された店舗を平均評価が高い順に並べ替え、ページングされた状態で取得する。
     public Page<Restaurant> findRestaurantsByCategoryIdOrderByRating(Integer id, Pageable pageable) {
         return restaurantRepository.findByCategoryIdOrderByRatingDesc(id, pageable);
     }
 
+    // 12.最低価格以下×評価順
     // 指定された最低価格以下の店舗を平均評価が高い順に並べ替え、ページングされた状態で取得する。
     public Page<Restaurant> findRestaurantsByLowestPriceLessThanEqualOrderByRating(Integer lowestPrice,
             Pageable pageable) {
         return restaurantRepository.findByLowestPriceLessThanEqualOrderByRatingDesc(lowestPrice, pageable);
+    }
+
+    // 13.全件×予約数順
+    public Page<Restaurant> findAllRestaurantsByOrderByReservationCountDesc(Pageable pageable) {
+        return restaurantRepository.findAllOrderByReservationCountDesc(pageable);
+    }
+
+    // 14.キーワード×予約数順
+    public Page<Restaurant> findRestaurantsByKeywordOrderByReservationCount(String keyword, Pageable pageable) {
+        return restaurantRepository.findByKeywordOrderByReservationCountDesc(keyword, pageable);
+    }
+
+    // 15.カテゴリーid×予約順
+    public Page<Restaurant> findRestaurantsByCategoryIdOrderByReserVationCountDesc(Integer categoryId,
+            Pageable pageable) {
+        return restaurantRepository.findByCategoryIdOrderByReservationCountDesc(categoryId, pageable);
+    }
+
+    // 16.最低価格×予約数順
+    public Page<Restaurant> findRestaurantsByLowestPriceOrderByResetbationCountDesc(Integer lowestPrice,
+            Pageable pageable) {
+        return restaurantRepository.findAllByOrderByLowestPriceAsc(pageable);
     }
 
 }

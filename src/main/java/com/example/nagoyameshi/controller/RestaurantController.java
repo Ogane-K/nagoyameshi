@@ -50,16 +50,26 @@ public class RestaurantController {
             @RequestParam(value = "categoryId", required = false) Integer categoryId,
             @RequestParam(value = "price", required = false) Integer price,
             @RequestParam(value = "order", required = false, defaultValue = "createdAtDesc") String order,
-            @PageableDefault(page = 0, size = 15, direction = Direction.ASC) Pageable pageable,
+            @PageableDefault(page = 0, size = 15, sort = "id", direction = Direction.ASC) Pageable pageable,
             Model model) {
 
         // 店舗一覧の雛形
         Page<Restaurant> restaurantPage;
+
+        // 検索if分岐の構造
+        // 大項目 キーワード検索orカテゴリーid検索or指定した価格以下検索
+        // 小項目 並び順の指定
+
         if (keyword != null && !keyword.isBlank()) {
             // キーワード検索
             if ("lowestPriceAsc".equals(order)) {
                 restaurantPage = restaurantSerchService.findRestaurantsByKeywordOrderByLowestPriceAsc(keyword,
                         pageable);
+            } else if ("popularDesc".equals(order)) {
+                restaurantPage = restaurantSerchService.findRestaurantsByKeywordOrderByReservationCount(keyword,
+                        pageable);
+            } else if ("ratingDesc".equals(order)) {
+                restaurantPage = restaurantSerchService.serchByKeywordsOrderByRating(keyword, pageable);
             } else {
                 restaurantPage = restaurantSerchService.findRestaurantsByKeywordOrderByCreatedAtDesc(keyword,
                         pageable);
@@ -69,6 +79,11 @@ public class RestaurantController {
             if ("lowestPriceAsc".equals(order)) {
                 restaurantPage = restaurantSerchService.findRestaurantsByCategoryIdOrderByLowestPriceAsc(categoryId,
                         pageable);
+            } else if ("popularDesc".equals(order)) {
+                restaurantPage = restaurantSerchService
+                        .findRestaurantsByCategoryIdOrderByReserVationCountDesc(categoryId, pageable);
+            } else if ("ratingDesc".equals(order)) {
+                restaurantPage = restaurantSerchService.findRestaurantsByCategoryIdOrderByRating(categoryId, pageable);
             } else {
                 restaurantPage = restaurantSerchService.findRestaurantsByCategoryIdOrderByCreatedAtDesc(categoryId,
                         pageable);
@@ -78,6 +93,12 @@ public class RestaurantController {
             if ("lowestPriceAsc".equals(order)) {
                 restaurantPage = restaurantSerchService.findRestaurantsByMaxPriceOrderByLowestPriceAsc(price,
                         pageable);
+            } else if ("popularDesc".equals(order)) {
+                restaurantPage = restaurantSerchService.findRestaurantsByLowestPriceOrderByResetbationCountDesc(price,
+                        pageable);
+            } else if ("ratingDesc".equals(order)) {
+                restaurantPage = restaurantSerchService.findRestaurantsByLowestPriceLessThanEqualOrderByRating(price,
+                        pageable);
             } else {
                 restaurantPage = restaurantSerchService.findRestaurantsByMaxPriceOrderByCreatedAtDesc(price, pageable);
             }
@@ -85,6 +106,10 @@ public class RestaurantController {
             // 条件なし（全件）
             if ("lowestPriceAsc".equals(order)) {
                 restaurantPage = restaurantSerchService.findAllOrderByLowestPriceAsc(pageable);
+            } else if ("popularDesc".equals(order)) {
+                restaurantPage = restaurantSerchService.findAllRestaurantsByOrderByReservationCountDesc(pageable);
+            } else if ("ratingDesc".equals(order)) {
+                restaurantPage = restaurantSerchService.findAllRestaurantsByOrderByRatingDesc(pageable);
             } else {
                 restaurantPage = restaurantSerchService.findAllOrderByCreatedAtDesc(pageable);
             }

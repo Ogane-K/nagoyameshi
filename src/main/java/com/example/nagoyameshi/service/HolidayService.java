@@ -57,4 +57,13 @@ public class HolidayService {
         return holidayCodes;
     }
 
+    // 指定した店舗の休日情報を値に変換する
+    public List<Integer> getrestaurantRegularHolidays(Restaurant restaurant) {
+        List<Integer> restaurantRegularHolidays = findHolidaysByRestaurant(restaurant).stream()
+                .map(holiday -> holiday.getDayType().getJsDayOfWeek())
+                .filter(dow -> dow >= 0)
+                .toList();
+
+        return restaurantRegularHolidays;
+    }
 }

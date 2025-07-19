@@ -54,7 +54,7 @@ public class ReviewController {
     @GetMapping("/restaurants/{restaurantId}/reviews")
     public String index(@PathVariable(value = "restaurantId") Integer id,
             @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
-            @PageableDefault(page = 0, size = 5, direction = Direction.ASC) Pageable pageable,
+            @PageableDefault(page = 0, size = 5, sort = "id", direction = Direction.ASC) Pageable pageable,
             RedirectAttributes redirectAttributes,
             Model model) {
 
