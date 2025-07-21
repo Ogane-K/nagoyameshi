@@ -1,33 +1,19 @@
 package com.example.nagoyameshi.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.boot.autoconfigure.task.TaskExecutionProperties.Mode;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import com.example.nagoyameshi.entity.Category;
-import com.example.nagoyameshi.entity.Restaurant;
-import com.example.nagoyameshi.exception.RestaurantNotFoundException;
-import com.example.nagoyameshi.service.CategoryService;
-import com.example.nagoyameshi.service.RestaurantService;
-
-import jakarta.persistence.EntityNotFoundException;
+import com.example.nagoyameshi.service.IndexOfAdminService;
 
 @Controller
 public class AdminController {
 
-   private final RestaurantService restaurantService;
-    private final CategoryService categoryService;
+    private final IndexOfAdminService indexOfAdminService;
 
-    public AdminController(RestaurantService restaurantService,
-            CategoryService categoryService) {
-        this.restaurantService = restaurantService;
-        this.categoryService = categoryService;
+    public AdminController(IndexOfAdminService indexOfAdminService) {
+        this.indexOfAdminService = indexOfAdminService;
     }
 
     @GetMapping("/admin")
@@ -35,53 +21,32 @@ public class AdminController {
 
         // ビューに渡すオブジェクトの作成
 
-        List<Restaurant> highlyRatedRestaurants = new ArrayList<>();
-        Page<Restaurant> newRestaurant = Page.empty();
+        Long totalFreeMembers = safeLong(indexOfAdminService.getNumberOfPeopleByAnyRole("ROLE_FREE_MEMBER"));
+        Long totalPremiumMembers = safeLong(indexOfAdminService.getNumberOfPeopleByAnyRole("ROLE_PREMIUM_MEMBER"));
+        Long totalSuperPremiumMembers = safeLong(
+                indexOfAdminService.getNumberOfPeopleByAnyRole("ROLE_SUPER_PREMIUM_MEMBER"));
 
-        List<Category> categories = new ArrayList<>();
+        Long totalPaidMembers = totalPremiumMembers + totalSuperPremiumMembers;
 
-        Category washoku = new Category();
-        Category udon = new Category();
-        Category don = new Category();
-        Category ramen = new Category();
-        Category oden = new Category();
-        Category fried = new Category();
+        Long totalMembers = totalPaidMembers + totalFreeMembers;
 
-        Pageable pageable = PageRequest.of(0, 6);
+        Long totalRestaurants = safeLong(indexOfAdminService.getTotalRestaurants());
+        Long totalReservations = safeLong(indexOfAdminService.getTotalReservations());
 
-        // 各要素の取得
-        try {
-            highlyRatedRestaurants = restaurantService.findRandom6Restaurants();
-            newRestaurant = restaurantService.findAllRestaurantsByOrderByCreatedAtDesc(pageable);
+        Long salesForThisMonth = (300 * totalPremiumMembers) + (500 * totalSuperPremiumMembers);
 
-            categories = categoryService.findAllCategoriesList();
+        model.addAttribute("totalFreeMembers", totalFreeMembers);
+        model.addAttribute("totalPaidMembers", totalPaidMembers);
+        model.addAttribute("totalMembers", totalMembers);
+        model.addAttribute("totalRestaurants", totalRestaurants);
+        model.addAttribute("totalReservations", totalReservations);
+        model.addAttribute("salesForThisMonth", salesForThisMonth);
 
-            washoku = categoryService.findCategoryByKeyword("和食");
-            udon = categoryService.findCategoryByKeyword("うどん");
-            don = categoryService.findCategoryByKeyword("丼物");
-            ramen = categoryService.findCategoryByKeyword("ラーメン");
-            oden = categoryService.findCategoryByKeyword("おでん");
-            fried = categoryService.findCategoryByKeyword("揚げ物");
-
-        } catch (RestaurantNotFoundException e) {
-            System.out.println(e.getMessage());
-        } catch (EntityNotFoundException e) {
-            System.err.println(e.getMessage());
-        }
-
-        model.addAttribute("highlyRatedRestaurants", highlyRatedRestaurants);
-        model.addAttribute("newRestaurants", newRestaurant);
-        model.addAttribute("categories", categories);
-
-        model.addAttribute("washoku", washoku);
-        model.addAttribute("udon", udon);
-        model.addAttribute("don", don);
-        model.addAttribute("ramen", ramen);
-        model.addAttribute("oden", oden);
-        model.addAttribute("fried", fried);
-
-        return "index";
+        return "admin/index";
     }
 
+    private Long safeLong(Long value) {
+        return value != null ? value : -1;
+    }
 
 }

@@ -31,7 +31,7 @@ public class RestaurantCategoryService {
         // 古いカテゴリーと店舗の関係を全削除
         restaurantCategoryRepository.deleteByRestaurant(restaurant);
 
-        if (ids != null || !ids.isEmpty()) {
+        if (ids != null) {
 
             // リストの中のカテゴリーidと店舗との関係を保存する
             for (Integer categoryId : ids) {
@@ -59,7 +59,7 @@ public class RestaurantCategoryService {
     }
 
     // 店舗と紐づくカテゴリーを検索する
-    public List<Category> findCategoriesByRestaurant(Restaurant restaurant){
+    public List<Category> findCategoriesByRestaurant(Restaurant restaurant) {
         return restaurantCategoryRepository.findCategoriesByRestaurant(restaurant);
     }
 

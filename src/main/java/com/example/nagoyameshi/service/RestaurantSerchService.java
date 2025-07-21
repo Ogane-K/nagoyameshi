@@ -67,7 +67,7 @@ public class RestaurantSerchService {
 
     // 10.キーワード×評価順
     public Page<Restaurant> serchByKeywordsOrderByRating(String keyword, Pageable pageable) {
-        return restaurantRepository.searchByKeywordOrderByRatingDesc(keyword, pageable);
+        return restaurantRepository.searchByKeywordOrderByRatingDesc("%" + keyword + "%", pageable);
     }
 
     // 11.id×評価順
@@ -90,7 +90,7 @@ public class RestaurantSerchService {
 
     // 14.キーワード×予約数順
     public Page<Restaurant> findRestaurantsByKeywordOrderByReservationCount(String keyword, Pageable pageable) {
-        return restaurantRepository.findByKeywordOrderByReservationCountDesc(keyword, pageable);
+        return restaurantRepository.findByKeywordOrderByReservationCountDesc("%" + keyword + "%", pageable);
     }
 
     // 15.カテゴリーid×予約順

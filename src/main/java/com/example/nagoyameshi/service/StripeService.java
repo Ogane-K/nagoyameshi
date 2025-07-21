@@ -52,8 +52,6 @@ import jakarta.annotation.PostConstruct;
 @Service
 public class StripeService {
 
-        private final UserService userService;
-
         private final UserRepository userRepository;
         private final PlanRepository planRepository;
         private final SubscriptionRepository subscriptionRepository;
@@ -69,7 +67,6 @@ public class StripeService {
                         RoleRepository roleRepository,
                         UserRoleRepository userRoleRepository) {
 
-                this.userService = userService;
                 this.userRepository = userRepository;
                 this.planRepository = planRepository;
                 this.subscriptionRepository = subscriptionRepository;

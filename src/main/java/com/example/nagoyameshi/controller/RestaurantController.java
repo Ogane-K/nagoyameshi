@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,10 +16,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.nagoyameshi.entity.Category;
+import com.example.nagoyameshi.entity.Favorite;
 import com.example.nagoyameshi.entity.Holiday;
 import com.example.nagoyameshi.entity.Restaurant;
+import com.example.nagoyameshi.entity.User;
+import com.example.nagoyameshi.exception.FavoriteNotFoundException;
 import com.example.nagoyameshi.exception.RestaurantNotFoundException;
+import com.example.nagoyameshi.security.UserDetailsImpl;
 import com.example.nagoyameshi.service.CategoryService;
+import com.example.nagoyameshi.service.FavoriteService;
 import com.example.nagoyameshi.service.HolidayService;
 import com.example.nagoyameshi.service.RestaurantCategoryService;
 import com.example.nagoyameshi.service.RestaurantSerchService;
@@ -32,17 +38,20 @@ public class RestaurantController {
     private final CategoryService categoryService;
     private final HolidayService holidayService;
     private final RestaurantCategoryService restaurantCategoryService;
+    private final FavoriteService favoriteService;
 
     public RestaurantController(RestaurantSerchService restaurantSerchService,
             CategoryService categoryService,
             RestaurantService restaurantService,
             HolidayService holidayService,
-            RestaurantCategoryService restaurantCategoryService) {
+            RestaurantCategoryService restaurantCategoryService,
+            FavoriteService favoriteService) {
         this.restaurantSerchService = restaurantSerchService;
         this.categoryService = categoryService;
         this.restaurantService = restaurantService;
         this.holidayService = holidayService;
         this.restaurantCategoryService = restaurantCategoryService;
+        this.favoriteService = favoriteService;
     }
 
     @GetMapping("/restaurants")
@@ -128,9 +137,13 @@ public class RestaurantController {
 
     // 店舗詳細情報の表示
     @GetMapping("/restaurants/{id}")
-    public String getMethodName(@PathVariable(value = "id") Integer id,
+    public String show(@PathVariable(value = "id") Integer id,
+            @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
             RedirectAttributes redirectAttributes,
             Model model) {
+
+        // ログイン中のユーザー
+        User user = userDetailsImpl.getUser();
 
         // 店舗のデーター
         Restaurant restaurant = new Restaurant();
@@ -151,11 +164,22 @@ public class RestaurantController {
             return "redirect:/restaurants";
         }
 
+        Favorite favorite = null;
+        boolean isFavorite = favoriteService.isFavorite(user, restaurant);
+        if (isFavorite) {
+            try {
+                favorite = favoriteService.findFavoriteByRestaurantAndUser(restaurant, user);
+            } catch (FavoriteNotFoundException e) {
+                System.err.println("(店舗概要ページ)" + e.getMessage());
+            }
+        }
+
+        model.addAttribute("favorite", favorite);
+        model.addAttribute("isFavorite", isFavorite);
         model.addAttribute("restaurant", restaurant);
         model.addAttribute("categoryList", categoryList);
         model.addAttribute("holidayList", holidayList);
 
         return "restaurants/show";
     }
-
 }

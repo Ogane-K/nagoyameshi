@@ -99,6 +99,9 @@ public class Restaurant {
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<Reservation> reservations;
 
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private List<Favorite> favorites;
+
     @Transient
     public BigDecimal getAverageScore() {
         if (reviews == null || reviews.isEmpty()) {

@@ -7,7 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -167,7 +166,7 @@ public class UserService {
 
     // ★認証系メソッド★
 
-    //　ログイン中のロールを更新する
+    // ログイン中のロールを更新する
     public void refreshAuthenticationByRole(String newRole) {
         // 現在の認証情報を取得する
         Authentication currentAuthentication = SecurityContextHolder.getContext().getAuthentication();

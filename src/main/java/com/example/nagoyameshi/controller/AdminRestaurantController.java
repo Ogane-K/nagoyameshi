@@ -39,7 +39,6 @@ import com.example.nagoyameshi.service.RestaurantService;
 public class AdminRestaurantController {
 
     // DIするクラスたち
-    private final CategoryRepository categoryRepository;
     private final CategoryService categoryService;
     private final RestaurantService restaurantService;
     private final RestaurantCategoryService restaurantCategoryService;
@@ -54,7 +53,6 @@ public class AdminRestaurantController {
         this.restaurantService = restaurantService;
         this.restaurantCategoryService = restaurantCategoryService;
         this.categoryService = categoryService;
-        this.categoryRepository = categoryRepository;
         this.holidayService = holidayService;
     }
 

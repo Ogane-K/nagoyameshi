@@ -20,21 +20,29 @@ public class WebSecurityConfig {
 
                 http
                                 .authorizeHttpRequests((requests) -> requests
+
+                                                // だれでもアクセス許可のエリア
                                                 .requestMatchers("/", "/login", "/css/**", "/js/**", "/resources/**",
                                                                 "/images/**",
                                                                 "/storage/**", "/signup/**", "/verify/**")
                                                 .permitAll()
+                                                // API受取用の設定エリア
                                                 .requestMatchers("/api/stripe/**", "/webhook/**").permitAll()
-                                                .requestMatchers("/restaurants/*/reviews/**")
+                                                // 会員のみアクセス許可のエリア
+                                                .requestMatchers("/restaurants/*/reviews/**", "/favorites/**",
+                                                                "/restaurants/{restaurantId}/favorites/**")
                                                 .hasAnyRole("PREMIUM_MEMBER", "SUPER_PREMIUM_MEMBER", "FREE_MEMBER")
-                                                .requestMatchers("/restaurants/**")
+                                                // 管理者のみアクセス禁止のエリア(非会員/会員/有料会員OK)
+                                                .requestMatchers("/restaurants/**", "/company", "/terms")
                                                 .access((authz, context) -> {
                                                         var authResult = authz.get().getAuthorities().stream()
                                                                         .noneMatch(a -> a.getAuthority()
-                                                                                        .equals("ROLE_ADMIN"));// 管理者のみアクセス禁止
+                                                                                        .equals("ROLE_ADMIN"));
                                                         return new AuthorizationDecision(authResult);
                                                 })
-                                                .requestMatchers("/admin/**").hasRole("ADMIN") // 全ユーザーにアクセスを許可するURL
+                                                // 管理者のみアクセス許可のエリア
+                                                .requestMatchers("/admin/**").hasRole("ADMIN")
+
                                                 .anyRequest().authenticated() // 上記以外のURLはログインが必要（ロールを問わない）
                                 )
                                 .formLogin((form) -> form

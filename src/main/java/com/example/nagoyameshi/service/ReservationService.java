@@ -17,12 +17,10 @@ import com.example.nagoyameshi.repository.RestaurantRepository;
 @Service
 public class ReservationService {
     private final ReservationRepository reservationRepository;
-    private final RestaurantRepository restaurantRepository;
 
     public ReservationService(ReservationRepository reservationRepository,
             RestaurantRepository restaurantRepository) {
         this.reservationRepository = reservationRepository;
-        this.restaurantRepository = restaurantRepository;
     }
 
     // 指定したidの予約を検索
