@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -138,13 +139,17 @@ public class RestaurantController {
     // 店舗詳細情報の表示
     @GetMapping("/restaurants/{id}")
     public String show(@PathVariable(value = "id") Integer id,
-            @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
+            @AuthenticationPrincipal @Nullable UserDetailsImpl userDetailsImpl,
             RedirectAttributes redirectAttributes,
             Model model) {
 
-        // ログイン中のユーザー
-        User user = userDetailsImpl.getUser();
-
+        User user = new User();
+        if (userDetailsImpl != null) {
+            // ログイン中のユーザー
+            user = userDetailsImpl.getUser();
+        } else {
+            user = null;
+        }
         // 店舗のデーター
         Restaurant restaurant = new Restaurant();
         // 店舗が所属しているカテゴリーのリスト

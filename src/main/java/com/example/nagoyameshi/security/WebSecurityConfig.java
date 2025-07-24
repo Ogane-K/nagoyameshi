@@ -15,6 +15,12 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity
 public class WebSecurityConfig {
 
+        private final CustomAuthenticationFailureHandler customFailureHandler;
+
+        public WebSecurityConfig(CustomAuthenticationFailureHandler customAuthenticationFailureHandler) {
+                this.customFailureHandler = customAuthenticationFailureHandler;
+        }
+
         @Bean
         SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
@@ -23,11 +29,11 @@ public class WebSecurityConfig {
 
                                                 // だれでもアクセス許可のエリア
                                                 .requestMatchers("/", "/login", "/css/**", "/js/**", "/resources/**",
-                                                                "/images/**",
-                                                                "/storage/**", "/signup/**", "/verify/**")
+                                                                "/images/**", "/storage/**", "/signup/**", "/verify/**")
                                                 .permitAll()
                                                 // API受取用の設定エリア
                                                 .requestMatchers("/api/stripe/**", "/webhook/**").permitAll()
+                                                .requestMatchers("/webhook/stripe").permitAll()
                                                 // 会員のみアクセス許可のエリア
                                                 .requestMatchers("/restaurants/*/reviews/**", "/favorites/**",
                                                                 "/restaurants/{restaurantId}/favorites/**")
@@ -49,13 +55,14 @@ public class WebSecurityConfig {
                                                 .loginPage("/login") // ログインページのURL
                                                 .loginProcessingUrl("/login") // ログインフォームの送信先URL
                                                 .defaultSuccessUrl("/?loggedIn") // ログイン成功時のリダイレクト先URL
-                                                .failureUrl("/login?error") // ログイン失敗時のリダイレクト先URL
+                                                .failureHandler(customFailureHandler)
                                                 .permitAll())
                                 .logout((logout) -> logout
                                                 .logoutSuccessUrl("/?loggedOut") // ログアウト時のリダイレクト先URL
                                                 .permitAll())
                                 .csrf(csrf -> csrf
-                                                .ignoringRequestMatchers("/api/stripe/**", "/webhook/**"));
+                                                .ignoringRequestMatchers("/api/stripe/**", "/webhook/**",
+                                                                "/webhook/stripe"));
 
                 return http.build();
         }

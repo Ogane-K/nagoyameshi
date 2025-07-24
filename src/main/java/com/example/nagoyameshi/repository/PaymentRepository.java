@@ -11,5 +11,5 @@ import com.example.nagoyameshi.entity.User;
 @Repository
 public interface PaymentRepository extends JpaRepository<Payment, Integer> {
 
-    public Optional<Payment> findByUser(User user);
+    public Optional<Payment> findTopByUserOrderByIdDesc(User user);
 }

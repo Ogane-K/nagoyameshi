@@ -61,7 +61,10 @@ public class FavoriteService {
     }
 
     // 指定したユーザーが指定した店舗をすでにお気に入りに追加済みかどうかをチェック 登録済ならtrue
-    public boolean isFavorite(User user,Restaurant restaurant){
+    public boolean isFavorite(User user, Restaurant restaurant) {
+        if (user == null) {
+            return false;
+        }
         return favoriteRepository.existsByRestaurantAndUser(restaurant, user);
     }
 

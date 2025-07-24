@@ -1,5 +1,6 @@
 package com.example.nagoyameshi.controller;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
@@ -11,6 +12,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -18,7 +20,6 @@ import com.example.nagoyameshi.entity.Category;
 import com.example.nagoyameshi.form.CategoryEditForm;
 import com.example.nagoyameshi.form.CategoryRegisterForm;
 import com.example.nagoyameshi.service.CategoryService;
-import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 public class AdminCategoryController {
@@ -31,7 +32,7 @@ public class AdminCategoryController {
 
     // カテゴリーマスタの編集画面の表示
     @GetMapping("/admin/categories")
-    public String index(@RequestParam(value = "keyword",required = false ) String keyword,
+    public String index(@RequestParam(value = "keyword", required = false) String keyword,
             @PageableDefault(page = 0, size = 15, sort = "id", direction = Direction.ASC) Pageable pageable,
             Model model) {
 
@@ -73,7 +74,7 @@ public class AdminCategoryController {
             } catch (Exception e) {
 
                 System.err.println("カテゴリーの登録に失敗しました。 :" + e.getMessage());
-                redirectAttributes.addFlashAttribute("errorMessage", "登録処理中にエラーが発生しました。");
+                redirectAttributes.addFlashAttribute("errorMessage", "登録処理中にエラーが発生しました。 : " + e.getMessage());
                 return "redirect:/admin/categories";
             }
         } else {
@@ -104,8 +105,10 @@ public class AdminCategoryController {
             } catch (IllegalArgumentException e) {
 
                 redirectAttributes.addFlashAttribute("errorMessage", "カテゴリが存在しません。");
+            } catch (DataIntegrityViolationException e) {
+                System.err.println("カテゴリーの更新に失敗しました :" + e.getMessage());
+                redirectAttributes.addFlashAttribute("errorMessage", "そのカテゴリ名はすでに登録されています。");
             } catch (Exception e) {
-
                 System.err.println("カテゴリーの更新に失敗しました :" + e.getMessage());
                 redirectAttributes.addFlashAttribute("errorMessage", "更新処理中にエラーが発生しました。");
             }

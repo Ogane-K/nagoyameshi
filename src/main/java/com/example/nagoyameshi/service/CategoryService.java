@@ -2,6 +2,7 @@ package com.example.nagoyameshi.service;
 
 import java.util.List;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -78,7 +79,7 @@ public class CategoryService {
 
     // フォームから送信されたカテゴリ情報でデータベースを更新する。
     @Transactional
-    public void updateCategory(Category category) {
+    public void updateCategory(Category category) throws DataIntegrityViolationException {
         categoryRepository.save(category);
     }
 

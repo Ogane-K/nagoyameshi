@@ -3,6 +3,7 @@ package com.example.nagoyameshi.controller;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -79,7 +80,7 @@ public class ReviewController {
 
         Role role = userRole.getRole();
         if ("ROLE_FREE_MEMBER".equals(role.getName())) {
-            pageable = PageRequest.of(0, 3, Direction.ASC);
+            pageable = PageRequest.of(0, 3, Sort.by(Direction.ASC, "createdAt"));
         }
 
         // レビューの一覧を取得する

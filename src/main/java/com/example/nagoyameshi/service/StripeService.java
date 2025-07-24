@@ -303,6 +303,11 @@ public class StripeService {
         public Payment updatePayment(User user) throws StripeException {
 
                 // カスタマーを取得する
+
+                if (user.getStripeCustomerId() == null) {
+                        return new Payment();
+                }
+
                 Customer customer = Customer.retrieve(user.getStripeCustomerId());
 
                 String paymentMethodId = customer.getInvoiceSettings().getDefaultPaymentMethod();
@@ -312,7 +317,7 @@ public class StripeService {
                         paymentMethod = PaymentMethod.retrieve(paymentMethodId);
                 }
 
-                Payment payment = paymentRepository.findByUser(user)
+                Payment payment = paymentRepository.findTopByUserOrderByIdDesc(user)
                                 .orElse(new Payment());
 
                 StripeMapper.mapToPaymentEntity(payment, user, paymentMethod);

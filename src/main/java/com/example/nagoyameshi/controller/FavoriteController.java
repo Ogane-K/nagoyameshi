@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,8 +26,6 @@ import com.example.nagoyameshi.service.RestaurantService;
 import com.example.nagoyameshi.service.UserRoleService;
 
 import jakarta.servlet.http.HttpServletRequest;
-
-
 
 @Controller
 public class FavoriteController {
@@ -72,14 +71,24 @@ public class FavoriteController {
     // お気に入りの登録POST
     @PostMapping("/restaurants/{restaurantId}/favorites/create")
     public String create(@PathVariable(value = "restaurantId") Integer restaurantId,
-            @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
+            @AuthenticationPrincipal @Nullable UserDetailsImpl userDetailsImpl,
             RedirectAttributes redirectAttributes,
             Model model) {
 
+        User user = new User();
         // ログイン中のユーザー情報と、そのロール権限を取得
-        User user = userDetailsImpl.getUser();
+        if (userDetailsImpl != null) {
+            user = userDetailsImpl.getUser();
+        } else {
+            user = null;
+        }
         // ユーザーのロールに応じて、予約フォームを表示するか判断
         Role nowRole = userRoleService.getRoleByUser(user);
+
+        if (user == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "お気に入り機能を利用するには、ログインが必要です。");
+            return "redirect:/restaurants/" + restaurantId;
+        }
 
         // 無料会員なら、予約不可 →プラン登録ページへ遷移
         String redirectUrl = redirectIfFreeMember(nowRole, redirectAttributes);

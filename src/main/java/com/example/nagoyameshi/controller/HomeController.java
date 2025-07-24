@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -45,18 +46,20 @@ public class HomeController {
     }
 
     @GetMapping("/")
-    public String index(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
+    public String index(@AuthenticationPrincipal @Nullable UserDetailsImpl userDetailsImpl,
             RedirectAttributes redirectAttributes,
             Model model) {
 
         // ログイン中のユーザー情報と、そのロール権限を取得
-        User user = userDetailsImpl.getUser();
-        // ユーザーが管理者の場合は、管理者用のトップページにリダイレクトさせる
-        Role nowRole = userRoleService.getRoleByUser(user);
+        if (userDetailsImpl != null) {
+            User user = userDetailsImpl.getUser();
+            // ユーザーが管理者の場合は、管理者用のトップページにリダイレクトさせる
+            Role nowRole = userRoleService.getRoleByUser(user);
 
-        String redirectUrl = redirectIfAdmin(nowRole, redirectAttributes);
-        if (redirectUrl != null) {
-            return redirectUrl;
+            String redirectUrl = redirectIfAdmin(nowRole, redirectAttributes);
+            if (redirectUrl != null) {
+                return redirectUrl;
+            }
         }
 
         // ビューに渡すオブジェクトの作成

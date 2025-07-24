@@ -94,7 +94,7 @@ public class UserService {
         UserRoleId userRoleId = new UserRoleId();
 
         // userRoleに格納用のロール情報を取得
-        Role role = roleRepository.findByName("ROLE_MEMBER")
+        Role role = roleRepository.findByName("ROLE_FREE_MEMBER")
                 .orElseThrow(() -> new RuntimeException("ロールが見つかりません"));
 
         // userRoleの主キーに値をセット

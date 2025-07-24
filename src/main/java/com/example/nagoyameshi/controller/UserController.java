@@ -31,7 +31,9 @@ public class UserController {
 
         User loginUser = userDetailsImpl.getUser();
 
-        model.addAttribute("user", loginUser);
+        User user = userService.findByUserById(loginUser.getId());
+
+        model.addAttribute("user", user);
         return "user/index";
     }
 
@@ -40,7 +42,7 @@ public class UserController {
             @ModelAttribute UserEditForm userEditForm,
             Model model) {
 
-        userEditForm = UserMapper.mapToForm(userDetailsImpl.getUser());
+        userEditForm = UserMapper.mapToForm(userService.findByUserById(userDetailsImpl.getUser().getId()));
 
         model.addAttribute("userEditForm", userEditForm);
         return "user/edit";
@@ -75,7 +77,7 @@ public class UserController {
             return "user/edit";
         }
 
-        redirectAttributes.addFlashAttribute("successMessage","会員情報を編集しました。");
+        redirectAttributes.addFlashAttribute("successMessage", "会員情報を編集しました。");
         return "redirect:/user";
     }
 

@@ -134,7 +134,8 @@
                                         <div class="col">
                                             <span th:each="role : ${roles}">
                                                 <span th:if="${'ROLE_FREE_MEMBER'.equals(role.role.name)}">無料会員</span>
-                                                <span th:if="${'ROLE_PAID_MEMBER'.equals(role.role.name)}">有料会員</span>
+                                                <span th:if="${'ROLE_PREMIUM_MEMBER'.equals(role.role.name)}">有料会員</span>
+                                                <span th:if="${'ROLE_SUPER_PREMIUM_MEMBER'.equals(role.role.name)}">超有料会員</span>
                                                 <span th:if="${'ROLE_ADMIN'.equals(role.role.name)}">管理者</span>
                                             </span>
                                         </div>

@@ -375,7 +375,11 @@ public class AdminRestaurantController {
         // 店舗情報の登録 イメージ画像が更新されていなかった場合は、エンティティの画像を更新しない
         try {
             MultipartFile imagFile = editForm.getImageFile();
-            if (imagFile == null || imagFile.isEmpty()) {
+            if ((imagFile == null || imagFile.isEmpty()) && (editForm.getCurrentImageFileName() == null || editForm.getCurrentImageFileName().isEmpty())) {
+
+                restaurant.setImage(null);
+                restaurantService.updateRestaurant(restaurant, null, categoryIds, holidayCodes);
+            } else if (imagFile == null || imagFile.isEmpty()) {
                 restaurant.setImage(editForm.getCurrentImageFileName());
                 restaurantService.updateRestaurant(restaurant, null, categoryIds, holidayCodes);
             } else {

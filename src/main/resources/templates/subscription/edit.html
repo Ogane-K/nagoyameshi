@@ -22,6 +22,12 @@
                             </ol>
                         </nav>
 
+                        <div th:if="${errorMessage}" class="container nagoyameshi-container my-3">
+                            <div class="alert alert-danger">
+                                <span th:text="${errorMessage}"></span>
+                            </div>
+                        </div>
+
                         <h1 class="mb-4 text-center">お支払い方法</h1>
 
                         <div class="container mb-4">

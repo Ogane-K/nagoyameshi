@@ -24,6 +24,10 @@ public class HolidayService {
     @Transactional
     public void updateHolidays(List<String> holidayCodes, Restaurant restaurant) {
 
+        if (holidayCodes == null || holidayCodes.isEmpty()) {
+            return;
+        }
+
         // 既存の休日情報を削除
         holidayRepository.deleteByRestaurant(restaurant);
         holidayRepository.flush();
