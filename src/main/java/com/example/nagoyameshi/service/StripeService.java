@@ -85,16 +85,22 @@ public class StripeService {
         // 各共用変数やフィールドに値をセット
         @PostConstruct
         private void init() {
-                // Stripeのシークレットキーを設定する
-                Dotenv dotenv = Dotenv.configure().load();
-                String stripeKey = dotenv.get("STRIPE_SECRET_KEY");
-                Stripe.apiKey = stripeKey;
+                String activeProfile = System.getenv("SPRING_PROFILES_ACTIVE");
 
-                successUrl = dotenv.get("STRIPE_SUCCESS_URL");
-                canceledUrl = dotenv.get("STRIPE_CANCELED_URL");
-                premiumProductId = dotenv.get("STRIPE_PRODUCT_300YEN");
-                superPremiumProductId = dotenv.get("STRIPE_PRODUCT_500YEN");
-
+                if ("production".equalsIgnoreCase(activeProfile)) {
+                        Stripe.apiKey = System.getenv("STRIPE_SECRET_KEY");
+                        successUrl = System.getenv("STRIPE_SUCCESS_URL");
+                        canceledUrl = System.getenv("STRIPE_CANCELED_URL");
+                        premiumProductId = System.getenv("STRIPE_PRODUCT_300YEN");
+                        superPremiumProductId = System.getenv("STRIPE_PRODUCT_500YEN");
+                } else {
+                        Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
+                        Stripe.apiKey = dotenv.get("STRIPE_SECRET_KEY");
+                        successUrl = dotenv.get("STRIPE_SUCCESS_URL");
+                        canceledUrl = dotenv.get("STRIPE_CANCELED_URL");
+                        premiumProductId = dotenv.get("STRIPE_PRODUCT_300YEN");
+                        superPremiumProductId = dotenv.get("STRIPE_PRODUCT_500YEN");
+                }
         }
 
         // 認証中のユーザーを取得

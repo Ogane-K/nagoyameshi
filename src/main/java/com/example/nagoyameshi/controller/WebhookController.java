@@ -39,8 +39,14 @@ public class WebhookController {
     // Webhookシークレットをenvから取得する
     @PostConstruct
     public void getWebhookSecret() {
-        Dotenv dotenv = Dotenv.configure().load();
-        this.webhookSecret = dotenv.get("STRIPE_WEBHOOK_SECRET");
+        String profile = System.getenv("SPRING_PROFILES_ACTIVE");
+
+        if ("production".equalsIgnoreCase(profile)) {
+            this.webhookSecret = System.getenv("STRIPE_WEBHOOK_SECRET");
+        } else {
+            Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
+            this.webhookSecret = dotenv.get("STRIPE_WEBHOOK_SECRET");
+        }
     }
 
     @PostMapping("/webhook/stripe")
@@ -51,7 +57,7 @@ public class WebhookController {
         User user = null;
         if (userDetailsImpl != null) {
             user = userDetailsImpl.getUser();
-        } 
+        }
 
         Event event = null;
 

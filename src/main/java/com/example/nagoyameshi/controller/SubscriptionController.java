@@ -45,9 +45,16 @@ public class SubscriptionController {
 
     @PostConstruct
     private void init() {
-        Dotenv dotenv = Dotenv.configure().load();
-        stripePublicKey = dotenv.get("STRIPE_PUBLIC_KEY");
-        stripeReturnUrl = dotenv.get("STRIPE_PORTAL_RETURN_URL");
+        String profile = System.getenv("SPRING_PROFILES_ACTIVE");
+
+        if ("production".equalsIgnoreCase(profile)) {
+            stripePublicKey = System.getenv("STRIPE_PUBLIC_KEY");
+            stripeReturnUrl = System.getenv("STRIPE_PORTAL_RETURN_URL");
+        } else {
+            Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
+            stripePublicKey = dotenv.get("STRIPE_PUBLIC_KEY");
+            stripeReturnUrl = dotenv.get("STRIPE_PORTAL_RETURN_URL");
+        }
     }
 
     // 有料プラン登録画面
