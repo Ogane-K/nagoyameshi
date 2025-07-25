@@ -16,6 +16,6 @@ public class AuthController {
             return "redirect:/";
         }
 
-        return "auth/login";
+        return "gitauth/login";
     }
 }
